@@ -1,0 +1,24 @@
+-- Databricks notebook source
+-- MAGIC %python
+-- MAGIC from pyspark.sql.functions import (
+-- MAGIC     col,
+-- MAGIC     to_date,
+-- MAGIC     year,
+-- MAGIC     month,
+-- MAGIC     dayofmonth,
+-- MAGIC     quarter,
+-- MAGIC     date_format,
+-- MAGIC     current_timestamp,
+-- MAGIC     monotonically_increasing_id
+-- MAGIC )
+-- MAGIC
+-- MAGIC customers = spark.table("silver_customers")
+-- MAGIC products = spark.table("silver_products")
+-- MAGIC orders = spark.table("silver_orders")
+-- MAGIC order_items = spark.table("silver_order_items")
+-- MAGIC payments = spark.table("silver_payments")
+-- MAGIC tickets = spark.table("silver_support_tickets")
+-- MAGIC events = spark.table("silver_customer_events")
+
+-- COMMAND ----------
+
