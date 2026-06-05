@@ -1,0 +1,11 @@
+order_id,customer_id,order_ts,status,channel,currency,total_amount
+ord_al_00021,cust_0389,2026-06-01T11:27:00Z,completed,mobile,SGD,163.79
+ord_al_00022,cust_0864,2026-06-01T11:34:00Z,completed,mobile,SGD,622.46
+ord_al_00023,cust_0825,2026-06-01T11:41:00Z,completed,teams,SGD,743.19
+ord_al_00024,cust_0217,2026-06-01T11:48:00Z,refunded,email,SGD,255.61
+ord_al_00025,cust_0512,2026-06-01T11:55:00Z,cancelled,teams,SGD,207.11
+ord_al_00026,cust_0143,2026-06-01T12:02:00Z,completed,email,SGD,145.73
+ord_al_00027,cust_0439,2026-06-01T12:09:00Z,refunded,teams,SGD,677.37
+ord_al_00028,cust_0142,2026-06-01T12:16:00Z,refunded,teams,SGD,338.56
+ord_al_00029,cust_0049,2026-06-01T12:23:00Z,completed,mobile,SGD,100.0
+ord_al_00030,cust_0812,2026-06-01T12:30:00Z,pending,teams,SGD,572.15

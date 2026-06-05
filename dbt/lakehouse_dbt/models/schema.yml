@@ -1,0 +1,128 @@
+version: 2
+
+models:
+  - name: stg_orders
+    description: "Staging model for orders data."
+    columns:
+      - name: order_id
+        description: "Unique identifier for each order."
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: "Identifier for the customer who placed the order."
+        tests:
+          - not_null
+
+      - name: order_ts
+        description: "Date when the order was placed."
+        tests:
+          - not_null
+
+      - name: status
+        description: "Current status of the order."
+      
+      - name: channel
+        description: "Channel through which the order was placed (e.g., online, in-store)."
+
+      - name: currency
+        description: "Currency used for the order."
+
+      - name: total_amount
+        description: "Total amount for the order."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1000000]
+      
+  - name: stg_customers
+    description: "Staging model for customers data."
+    columns:
+      - name: customer_id
+        description: "Unique identifier for each customer."
+        tests:
+          - not_null
+          - unique
+
+      - name: customer_name
+        description: "Name of the customer."
+        tests:
+          - not_null
+
+      - name: email
+        description: "Email address of the customer."
+
+      - name: country
+        description: "Country of residence for the customer."
+
+      - name: signup_date
+        description: "Date when the customer signed up."
+
+      - name: customer_segment
+        description: "Segment to which the customer belongs (e.g., regular, premium)."
+      
+      - name: marketing_opt_in
+        description: "Indicates whether the customer has opted in for marketing communications."
+        
+  - name: stg_payments
+    description: "Staging model for payments data."
+    columns:
+      - name: payment_id
+        description: "Unique identifier for each payment."
+        tests:
+          - not_null
+          - unique
+
+      - name: order_id
+        description: "Identifier for the order associated with the payment."
+        tests:
+          - not_null
+
+      - name: payment_ts
+        description: "Date when the payment was made."
+        tests:
+          - not_null
+
+      - name: payment_method
+        description: "Method used for the payment (e.g., credit card, PayPal)."
+
+      - name: payment_status
+        description: "Status of the payment (e.g., success, failed)."
+
+      - name: amount
+        description: "Amount paid."
+
+  - name: mart_revenue_by_segment
+    description: "Mart model for revenue by customer segment."
+    columns:
+      - name: country
+        description: "Country of residence for the customer segment."
+
+      - name: customer_segment
+        description: "Segment to which the customer belongs (e.g., regular, premium)."
+
+      - name: order_count
+        description: "Total number of orders placed by the customer segment."
+      
+      - name: revenue
+        description: "Total revenue generated from the customer segment."
+
+  - name: mart_payment_success
+    description: "Mart model for payment success metrics."
+    columns:
+      - name: payment_date
+        description: "Date of the payment."
+
+      - name: total_payments
+        description: "Total number of payments made on the payment date."
+
+      - name: successful_payments
+        description: "Number of successful payments on the payment date."
+
+      - name: failed_payments
+        description: "Number of failed payments on the payment date."
+
+      - name: payment_success_rate
+        description: "Success rate of payments on the payment date, calculated as successful payments divided by total payments."
+        
