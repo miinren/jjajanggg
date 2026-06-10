@@ -1,0 +1,53 @@
+name: dbt CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  dbt-ci:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: dbt/lakehouse_dbt
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dbt Databricks
+        run: pip install dbt-databricks
+
+      - name: Create dbt profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml <<EOF
+          lakehouse_dbt:
+            outputs:
+              dev:
+                type: databricks
+                catalog: workspace
+                schema: default
+                host: ${{ secrets.DATABRICKS_HOST }}
+                http_path: ${{ secrets.DATABRICKS_HTTP_PATH }}
+                token: ${{ secrets.DATABRICKS_TOKEN }}
+                threads: 4
+            target: dev
+          EOF
+
+      - name: dbt debug
+        run: dbt debug
+
+      - name: dbt compile
+        run: dbt compile
+
+      - name: dbt test
+        run: dbt test
