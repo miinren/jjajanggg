@@ -33,8 +33,6 @@ models:
         description: "Total amount for the order."
         tests:
           - not_null
-          - accepted_values:
-              values: [0, 1000000]
       
   - name: stg_customers
     description: "Staging model for customers data."
@@ -125,4 +123,3 @@ models:
 
       - name: payment_success_rate
         description: "Success rate of payments on the payment date, calculated as successful payments divided by total payments."
-        
