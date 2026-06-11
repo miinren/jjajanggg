@@ -5,7 +5,31 @@ End-to-end data engineering pipeline built using Databricks, Auto Loader, and Po
 
 ## Architecture
 
-Raw Data → Bronze → Silver → Gold → Power BI
+### Batch Pipeline
+
+Raw CSV/JSON Files
+    ↓
+Databricks Auto Loader
+    ↓
+Bronze Delta Tables
+    ↓
+Silver Cleaned Tables
+    ↓
+Gold Business Aggregations
+    ↓
+Power BI Dashboard
+
+### Streaming Pipeline
+
+Confluent Kafka Topic (`orders`)
+    ↓
+Databricks Structured Streaming
+    ↓
+Bronze Kafka Delta Table
+    ↓
+Silver Kafka Cleansed Table
+    ↓
+Gold Kafka Revenue Aggregation
 
 ## Tools Used
 
@@ -48,3 +72,35 @@ Raw Data → Bronze → Silver → Gold → Power BI
 ## Dashboard
 
 See `/powerbi/dashboard.pbix`
+
+## Kafka Streaming Pipeline
+
+This project includes a Kafka streaming ingestion pipeline using Confluent Cloud and Databricks Structured Streaming.
+
+### Architecture
+
+Kafka Topic (`orders`)
+    ↓
+Bronze Kafka Table
+    ↓
+Silver Kafka Table
+    ↓
+Gold Kafka Aggregation
+
+### Features
+
+- Real-time Kafka ingestion
+- Structured Streaming
+- Delta Lake Bronze/Silver/Gold architecture
+- Secret management using Databricks Secrets
+- Event deduplication using watermarking
+- Quarantine handling for invalid records
+- Kafka metadata tracking (topic, partition, offset)
+
+## Future Improvements
+
+- Workflow orchestration using Apache Airflow
+- Real-time dashboard refresh automation
+- Advanced data observability and monitoring
+- Additional Kafka topics and event streams
+- Cloud deployment automation
