@@ -1,0 +1,4 @@
+band 0.02: SR 2.803 (8bp 2.661 12bp 2.434) vs W06 -0.048 bp/day t -1.58, pre-cost -0.075 t -2.44, hedge_to 0.109, daily beta 0.0453, track vs W06 1.47 bp
+band 0.03: SR 2.827 (8bp 2.688 12bp 2.467) vs W06 +0.118 bp/day t 2.90, pre-cost +0.028 t 0.68, hedge_to 0.097, daily beta 0.0449, track vs W06 1.92 bp
+band 0.05: SR 2.826 (8bp 2.694 12bp 2.482) vs W06 +0.115 bp/day t 1.44, pre-cost -0.074 t -0.92, hedge_to 0.080, daily beta 0.0445, track vs W06 3.75 bp
+W06 daily beta 0.0450

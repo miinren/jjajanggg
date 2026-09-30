@@ -1,5 +1,39 @@
 # Wave 3c: higher-frequency (1–8h) execution timing, settlement timing and entry filters; plus wave 4 (new signals, a holistic model and a hedge band)
 
+> ## ⚠ MAJOR FINDING: the harness's log-return accounting inflates every Sharpe in this research programme by about 2x
+> `cloud_harness` and every `ext*.book` book P&L as **weight × log return** (`D.Rn = log(C).diff().shift(-2)`). Real P&L is weight × *simple* return.
+>
+> **The bias.** For a short, log accounting adds about |w|·r²/2 every hour, and the book shorts the *most volatile* coins. So the bias systematically rewards the core idea of shorting high idio-vol names. For longs it works the other way (it understates them).
+>
+> **Measured on B-MV (8-clock)** (`diag_simple.py`, `realistic.py`, `realistic.txt`):
+>
+> | accounting | SR 5.5 / 8 / 12 bp | net bp/day | long / short / hedge / funding bp/day | mdd@2% | worst yr |
+> |---|---|---|---|---|---|
+> | log (all prior reports) | 2.77 / 2.62 / 2.36 | 20.8 | −1.2 / **+18.1** / 4.5 / 2.0 | −25 | 1.74 |
+> | simple returns | 1.39 / 1.23 / 0.98 | 10.5 | +4.5 / **+1.0** / 5.6 / 2.0 | – | 0.30 |
+> | **simple + positions drift between trades (realistic)** | **1.44 / 1.25 / 0.95** | 11.0 | +4.2 / **+2.2** / 5.7 / 2.0 | −35 | 0.61 |
+>
+> About 16–17 bp/day of the short leg's "alpha" is an accounting artefact. That implies an hourly vol of about 1.1% for the shorted names and about 0.7% for the longs, both realistic. It is consistent with the live book running well below the backtest (FINAL_REPORT already put live at an SR of about 0.8–1.6).
+>
+> **Does the adoption chain survive?** Yes: realistic accounting, 8-clock, risk-matched partition tests.
+>
+> | book (realistic) | SR 5.5 / 8 / 12 bp | mdd@2% | worst-yr SR | yearly SR 2020–25 |
+> |---|---|---|---|---|
+> | LIVE | 0.71 / 0.58 / 0.36 | −49.7 | −0.15 | 2.57 / −0.15 / 0.07 / 1.09 / 0.98 / 0.43 |
+> | B | 1.06 / 0.91 / 0.67 | −46.2 | 0.03 | 3.39 / 0.03 / 0.12 / 1.24 / 1.41 / 0.90 |
+> | **B-MV** | **1.44 / 1.25 / 0.95** | −35.2 | 0.61 | 3.30 / 0.61 / 0.65 / 1.11 / 1.79 / 1.55 |
+> | **B-MV + hedge band (W12 variant)** | **1.50 / 1.34 / 1.09** | −34.2 | 0.67 | 3.32 / 0.67 / 0.70 / 1.18 / 1.85 / 1.63 |
+>
+> Paired tests:
+> - **B vs LIVE:** t 2.77, 6/6 years, 4/5 groups. **adopt**.
+> - **B-MV vs B:** t 2.65 (it was +1.49 under log), 4/6 years. The partition test fails on years, but B-MV is now a *return* improvement as well as a risk-shape one.
+> - **B-MV vs LIVE:** t 3.84, 6/6 years. **adopt**.
+> - **Hedge band vs B-MV:** t 8.5, 6/6 years. **adopt**.
+>
+> **So the recommendation (switch to B-MV, add the W06 hedge band) stands, but the realistic backtest SR is about 1.4–1.5, not 2.8.** At 12 bp it is about 1.0.
+>
+> **Follow-up needed.** Every parameter chosen in earlier waves under log accounting should be re-checked under `simple=True, drift=True`: short 55%, N=12/NS=20, the 20% stop, the funding weight, the score's L=336 and the idio-vol construction. The bias favours short-heavy, high-vol-short choices, so some may be mis-tuned. The log-vs-simple gap also means any feature that tilts shorts toward volatile names looked better than it is. All relative results in this report compare books under the *same* accounting, so the sign of most verdicts should hold, but magnitudes on the short leg are overstated.
+
 Research only. Data runs 2020-03-15..2025-12-31 (the 2026 holdout was not touched). Every book is **8-clock averaged** and compared with **B-MV**
 (`ext3.book(D, S0, short_frac=0.55, stop=0.2, N=12, NS=20, leg_weights=minvar_floor)`). The new engine `ext4.py` reproduces B-MV
 **bit for bit** at all 8 offsets (`verify.py`: max diff 0.0), giving SR **2.773** at 5.5 bp, **2.616** at 8 bp and **2.364** at 12 bp.
@@ -106,7 +140,7 @@ Each value is the effect of the rule's swap on forward 8h residual returns (bp),
 - **Beta unchanged.** Daily beta to BTC is 0.045 in both books. Daily tracking vs B-MV is 1.8 bp, against a daily vol of 143 bp.
 - **Lower BTC cost.** BTC is the most liquid perp, so it probably trades cheaper than 5.5 bp. At a 2 bp hedge cost the saving is still +0.13 bp/day (t 3.3), at 3.5 bp +0.19 (t 4.9).
 - **Plateau.** Band 0.02 to 0.05 are all better; the worst neighbour is 0.02 (t 7.0).
-- **Size of the gain.** It is modest: about +0.04 SR. Implement it only if the live bot currently re-hedges hourly; it is a two-line change.
+- **Size of the gain.** It is modest: about +0.04 SR under log accounting and **+0.06 SR under realistic accounting** (W12 variant: 1.44 → 1.50). Implement it only if the live bot currently re-hedges hourly; it is a two-line change.
 
 ### W08: holistic model (the user asked for "all data together")
 - **Model.** One gradient-boosted model (fixed hyper-parameters, no tuning) is trained on **17 features at once**: S0, idio, funding level and change, flow, volume spike, 24h volume, 24/72/168h residual returns, idio share, near-high, BTC beta, max |z|, variance ratio, settlement drift and universe size. It is retrained each year on data before that year only (2021–25) and predicts each coin's 72h forward residual rank.
@@ -126,6 +160,23 @@ Each value is the effect of the rule's swap on forward 8h residual returns (bp),
 - **Conclusion.** Better forecasting inside the tails does not beat B-MV unless it changes *which* names are held in the right direction, and none of our data does that reliably.
 - **Next step, if pursued.** The model could be retrained on the swap objective itself: marginal-in minus marginal-out returns net of cost. That is a new pre-registered trial and a likely overfit risk.
 
+
+### Wave 4, round 2 (idea agent round 2; red-team fixes)
+- **W10 no-trade band on small re-weights of continuing names** (band 0.15 / 0.30 / 0.50): t −1.10 / −1.61 / −0.40, 0–2/8 clocks. **FAIL.**
+  - Turnover falls (0.469 → 0.44), but volatility rises. The minvar re-weights carry real risk-control value; they are not noise trading.
+- **W11 combo** (W06 hedge band + W10 + TWAP3): SR 2.78, t 0.27. **FAIL.** W10 drags it below W06 alone.
+- **W12 hedge band without forced re-hedges at rebalances and stops:**
+  - vs B-MV: SR 2.83, t 7.2.
+  - vs W06, its pre-registered comparison: +0.118 bp/day, t 2.90, pre-cost +0.03 (t 0.7).
+  - **The plateau fails** (`w12_checks.txt`): band 0.02 gives −0.05 bp/day (t −1.6, pre-cost t −2.4) and band 0.05 gives +0.12 (t 1.4, pre-cost −0.07).
+  - **Not adopted over W06.** W06, with forced re-hedges, stays the recommended band; its plateau was t 6–7 at every band.
+- **Price-drift diagnostic** (`diag_drift.py`, `diag_drift.csv`). The constant-weight engine hides turnover: with realistic drift, turnover rises 0.469 → 0.571/day.
+  - Under log accounting, pre-cost P&L also rose (+1.0 bp/day), so net SR went 2.77 → 2.81 at 5.5 bp and 2.36 → 2.32 at 12 bp.
+  - Realistic books should use `drift=True`.
+- **Round-2 ideas killed by back-of-envelope, not run.** Stop deferral around settlement, levering up over the settlement bar, settlement-aware exits, and special handling of re-shorts after a ban.
+  - The settlement spread (about 4 bp/h) is far below the round-trip cost (about 11 bp).
+  - **Caveat for any future settlement test:** the engine books funding evenly across hours (F/24), whereas real funding is paid at 00/08/16 UTC to whoever holds at that moment.
+
 ## Caveats (red-team audit summary)
 - **Lookahead.** None found: every feature and policy uses rows ≤ i, forward windows start at R1[i+2], and `np.roll` wrap-around is masked.
 - **Hedge-turnover artefact.** Confirmed. It inflated the losses of the signal-timed delays in E05–E13; E14/E15 correct it.
@@ -134,49 +185,56 @@ Each value is the effect of the rule's swap on forward 8h residual returns (bp),
 
 ## Full results table (8-clock averaged; t = risk-matched NW t vs B-MV; adopt = partition adopt AND t ≥ 2)
 
-| id           |    SR |   SR8 |   SR12 |      t | years   | groups   | reg         | padopt   | adopt             |    mdd2 |   minYr |    to |   clocks_won |
-|:-------------|------:|------:|-------:|-------:|:--------|:---------|:------------|:---------|:------------------|--------:|--------:|------:|-------------:|
-| E01          | 2.788 | 2.631 |  2.381 |  1.811 | 5/6     | 4/5      | 0.15/0.05   | True     | False             | -24.699 |   1.758 | 0.465 |            7 |
-| E02          | 2.802 | 2.646 |  2.397 |  2.033 | 5/6     | 3/5      | 0.30/0.11   | False    | False             | -24.356 |   1.769 | 0.462 |            8 |
-| E03          | 2.812 | 2.656 |  2.408 |  1.951 | 5/6     | 2/5      | 0.40/0.15   | False    | False             | -23.992 |   1.768 | 0.46  |            8 |
-| E04          | 2.793 | 2.635 |  2.381 |  0.738 | 5/6     | 4/5      | 0.40/-0.16  | False    | False             | -25.415 |   1.71  | 0.471 |            4 |
-| E05          | 2.703 | 2.518 |  2.224 | -1.929 | 0/6     | 1/5      | -0.79/-0.21 | False    | False             | -26.938 |   1.639 | 0.547 |            1 |
-| E06          | 2.714 | 2.53  |  2.235 | -1.573 | 2/6     | 2/5      | -0.75/-0.07 | False    | False             | -25.86  |   1.638 | 0.545 |            1 |
-| E07          | 2.743 | 2.559 |  2.265 | -0.738 | 2/6     | 3/5      | -0.07/-0.42 | False    | False             | -24.685 |   1.678 | 0.544 |            2 |
-| E08          | 2.714 | 2.527 |  2.226 | -2.945 | 1/6     | 4/5      | -0.49/-0.38 | False    | False             | -24.957 |   1.689 | 0.566 |            0 |
-| E09          | 2.777 | 2.618 |  2.365 |  0.308 | 1/6     | 3/5      | -0.07/0.15  | False    | False             | -25.01  |   1.742 | 0.473 |            5 |
-| E10          | 2.768 | 2.603 |  2.34  | -0.443 | 1/6     | 3/5      | 0.03/-0.12  | False    | False             | -24.984 |   1.724 | 0.49  |            2 |
-| E11          | 2.757 | 2.595 |  2.338 | -3.902 | 1/6     | 1/5      | -0.13/-0.12 | False    | False             | -25.175 |   1.718 | 0.48  |            1 |
-| E12          | 2.707 | 2.511 |  2.197 | -2.794 | 0/6     | 5/5      | -0.48/-0.53 | False    | False             | -24.881 |   1.669 | 0.591 |            1 |
-| E13          | 2.655 | 2.443 |  2.104 | -2.761 | 0/6     | 2/5      | -1.16/-0.56 | False    | False             | -26.866 |   1.585 | 0.635 |            1 |
-| E14          | 2.812 | 2.655 |  2.405 |  1.166 | 2/6     | 5/5      | 0.03/0.63   | False    | False             | -23.911 |   1.725 | 0.469 |            6 |
-| E15          | 2.799 | 2.642 |  2.392 |  0.893 | 1/6     | 4/5      | -0.14/0.62  | False    | False             | -23.967 |   1.747 | 0.469 |            7 |
-| E16          | 2.79  | 2.633 |  2.38  |  1.244 | 4/6     | 3/5      | 0.27/-0.05  | False    | False             | -24.333 |   1.721 | 0.468 |            5 |
-| F01_o3       | 2.737 | 2.586 |  2.344 | -0.36  | 1/6     | 3/5      | -0.56/0.08  | False    | False             | -25.461 |   1.609 | 0.462 |          nan |
-| F02_o1       | 2.806 | 2.652 |  2.407 |  0.31  | 3/6     | 3/5      | -0.29/0.92  | False    | False             | -23.496 |   1.821 | 0.47  |          nan |
-| V01          | 2.735 | 2.575 |  2.319 | -0.332 | 2/6     | 3/5      | 0.65/-1.48  | False    | False             | -25.16  |   1.58  | 0.459 |            3 |
-| V02          | 2.724 | 2.564 |  2.307 | -0.463 | 1/6     | 3/5      | 0.53/-1.50  | False    | False             | -24.244 |   1.513 | 0.46  |            2 |
-| V03          | 2.773 | 2.615 |  2.363 | -0.002 | 4/6     | 3/5      | 0.01/-0.02  | False    | False             | -24.571 |   1.649 | 0.468 |            4 |
-| V04          | 2.69  | 2.529 |  2.27  | -0.641 | 2/6     | 3/5      | 1.16/-2.88  | False    | False             | -23.815 |   1.33  | 0.454 |            3 |
-| V05          | 2.791 | 2.632 |  2.378 |  0.254 | 3/6     | 3/5      | 0.97/-0.91  | False    | False             | -22.618 |   1.554 | 0.463 |            5 |
-| V06          | 2.682 | 2.524 |  2.27  | -1.252 | 2/6     | 2/5      | -0.11/-1.41 | False    | False             | -23.562 |   1.736 | 0.463 |            2 |
-| V07          | 2.674 | 2.515 |  2.261 | -1.42  | 2/6     | 1/5      | -0.10/-1.56 | False    | False             | -23.115 |   1.646 | 0.464 |            0 |
-| V08          | 2.773 | 2.616 |  2.365 | -0.007 | 3/6     | 2/5      | -0.07/0.09  | False    | False             | -24.835 |   1.736 | 0.468 |            4 |
-| V09          | 2.665 | 2.508 |  2.256 | -0.988 | 2/6     | 1/5      | 0.71/-2.73  | False    | False             | -27.011 |   1.381 | 0.462 |            0 |
-| V10          | 2.736 | 2.578 |  2.325 | -0.762 | 3/6     | 3/5      | 0.31/-1.03  | False    | False             | -24.961 |   1.637 | 0.467 |            2 |
-| V11          | 2.755 | 2.597 |  2.344 | -0.459 | 3/6     | 2/5      | 0.29/-0.68  | False    | False             | -24.688 |   1.624 | 0.467 |            4 |
-| N02b         | 2.336 | 2.163 |  1.886 | -3.325 | 1/6     | 1/5      | -3.74/-2.77 | False    | False             | -34.422 |   0.986 | 0.517 |            0 |
-| N03b         | 2.556 | 2.396 |  2.141 | -1.878 | 2/6     | 2/5      | -2.17/-0.99 | False    | False             | -34.274 |   0.962 | 0.466 |            0 |
-| N02s         | 2.267 | 2.02  |  1.626 | -4.266 | 0/6     | 1/5      | -4.50/-2.98 | False    | False             | -34.21  |   0.858 | 0.615 |            0 |
-| N02s_rw0.15  | 2.52  | 2.31  |  1.976 | -3.837 | 0/6     | 1/5      | -2.26/-1.49 | False    | False             | -28.131 |   1.252 | 0.556 |            0 |
-| N02s_rw0.35  | 1.937 | 1.653 |  1.2   | -4.721 | 0/6     | 0/5      | -7.45/-4.92 | False    | False             | -44.371 |   0.44  | 0.673 |            0 |
-| W05          | 2.736 | 2.572 |  2.309 | -0.538 | 3/6     | 3/5      | -0.03/-0.60 | False    | False             | -26.013 |   1.416 | 0.508 |            0 |
-| W06          | 2.811 | 2.668 |  2.438 |  7.284 | 6/6     | 5/5      | 0.28/0.30   | True     | ADOPT (cost-only) | -24.872 |   1.772 | 0.427 |            8 |
-| W06_band0.02 | 2.8   | 2.655 |  2.422 |  7.019 | 6/6     | 5/5      | 0.18/0.23   | True     | ADOPT (cost-only) | -25.001 |   1.764 | 0.432 |            8 |
-| W06_band0.05 | 2.817 | 2.674 |  2.446 |  6.209 | 6/6     | 5/5      | 0.34/0.31   | True     | ADOPT (cost-only) | -24.807 |   1.778 | 0.424 |            8 |
-| W07          | 2.787 | 2.629 |  2.377 |  1.064 | 3/6     | 4/5      | 0.17/0.02   | False    | False             | -25.009 |   1.719 | 0.469 |            5 |
-| W08          | 2.502 | 2.314 |  2.013 | -1.677 | 2/6     | 2/5      | -1.09/-3.26 | False    | False             | -30.181 |   0.992 | 0.542 |            0 |
-| W09          | 2.476 | 2.263 |  1.922 | -1.682 | 1/6     | 1/5      | -0.26/-4.74 | False    | False             | -27.415 |   1.072 | 0.578 |            0 |
+**All rows use log accounting (comparable with every earlier wave); see the major-finding box for realistic levels.**
+
+| id           |    SR |   SR8 |   SR12 |      t | years   | groups   | reg         | padopt   | adopt                                |    mdd2 |   minYr |    to |   clocks_won |
+|:-------------|------:|------:|-------:|-------:|:--------|:---------|:------------|:---------|:-------------------------------------|--------:|--------:|------:|-------------:|
+| E01          | 2.788 | 2.631 |  2.381 |  1.811 | 5/6     | 4/5      | 0.15/0.05   | True     | False                                | -24.699 |   1.758 | 0.465 |            7 |
+| E02          | 2.802 | 2.646 |  2.397 |  2.033 | 5/6     | 3/5      | 0.30/0.11   | False    | False                                | -24.356 |   1.769 | 0.462 |            8 |
+| E03          | 2.812 | 2.656 |  2.408 |  1.951 | 5/6     | 2/5      | 0.40/0.15   | False    | False                                | -23.992 |   1.768 | 0.46  |            8 |
+| E04          | 2.793 | 2.635 |  2.381 |  0.738 | 5/6     | 4/5      | 0.40/-0.16  | False    | False                                | -25.415 |   1.71  | 0.471 |            4 |
+| E05          | 2.703 | 2.518 |  2.224 | -1.929 | 0/6     | 1/5      | -0.79/-0.21 | False    | False                                | -26.938 |   1.639 | 0.547 |            1 |
+| E06          | 2.714 | 2.53  |  2.235 | -1.573 | 2/6     | 2/5      | -0.75/-0.07 | False    | False                                | -25.86  |   1.638 | 0.545 |            1 |
+| E07          | 2.743 | 2.559 |  2.265 | -0.738 | 2/6     | 3/5      | -0.07/-0.42 | False    | False                                | -24.685 |   1.678 | 0.544 |            2 |
+| E08          | 2.714 | 2.527 |  2.226 | -2.945 | 1/6     | 4/5      | -0.49/-0.38 | False    | False                                | -24.957 |   1.689 | 0.566 |            0 |
+| E09          | 2.777 | 2.618 |  2.365 |  0.308 | 1/6     | 3/5      | -0.07/0.15  | False    | False                                | -25.01  |   1.742 | 0.473 |            5 |
+| E10          | 2.768 | 2.603 |  2.34  | -0.443 | 1/6     | 3/5      | 0.03/-0.12  | False    | False                                | -24.984 |   1.724 | 0.49  |            2 |
+| E11          | 2.757 | 2.595 |  2.338 | -3.902 | 1/6     | 1/5      | -0.13/-0.12 | False    | False                                | -25.175 |   1.718 | 0.48  |            1 |
+| E12          | 2.707 | 2.511 |  2.197 | -2.794 | 0/6     | 5/5      | -0.48/-0.53 | False    | False                                | -24.881 |   1.669 | 0.591 |            1 |
+| E13          | 2.655 | 2.443 |  2.104 | -2.761 | 0/6     | 2/5      | -1.16/-0.56 | False    | False                                | -26.866 |   1.585 | 0.635 |            1 |
+| E14          | 2.812 | 2.655 |  2.405 |  1.166 | 2/6     | 5/5      | 0.03/0.63   | False    | False                                | -23.911 |   1.725 | 0.469 |            6 |
+| E15          | 2.799 | 2.642 |  2.392 |  0.893 | 1/6     | 4/5      | -0.14/0.62  | False    | False                                | -23.967 |   1.747 | 0.469 |            7 |
+| E16          | 2.79  | 2.633 |  2.38  |  1.244 | 4/6     | 3/5      | 0.27/-0.05  | False    | False                                | -24.333 |   1.721 | 0.468 |            5 |
+| F01_o3       | 2.737 | 2.586 |  2.344 | -0.36  | 1/6     | 3/5      | -0.56/0.08  | False    | False                                | -25.461 |   1.609 | 0.462 |          nan |
+| F02_o1       | 2.806 | 2.652 |  2.407 |  0.31  | 3/6     | 3/5      | -0.29/0.92  | False    | False                                | -23.496 |   1.821 | 0.47  |          nan |
+| V01          | 2.735 | 2.575 |  2.319 | -0.332 | 2/6     | 3/5      | 0.65/-1.48  | False    | False                                | -25.16  |   1.58  | 0.459 |            3 |
+| V02          | 2.724 | 2.564 |  2.307 | -0.463 | 1/6     | 3/5      | 0.53/-1.50  | False    | False                                | -24.244 |   1.513 | 0.46  |            2 |
+| V03          | 2.773 | 2.615 |  2.363 | -0.002 | 4/6     | 3/5      | 0.01/-0.02  | False    | False                                | -24.571 |   1.649 | 0.468 |            4 |
+| V04          | 2.69  | 2.529 |  2.27  | -0.641 | 2/6     | 3/5      | 1.16/-2.88  | False    | False                                | -23.815 |   1.33  | 0.454 |            3 |
+| V05          | 2.791 | 2.632 |  2.378 |  0.254 | 3/6     | 3/5      | 0.97/-0.91  | False    | False                                | -22.618 |   1.554 | 0.463 |            5 |
+| V06          | 2.682 | 2.524 |  2.27  | -1.252 | 2/6     | 2/5      | -0.11/-1.41 | False    | False                                | -23.562 |   1.736 | 0.463 |            2 |
+| V07          | 2.674 | 2.515 |  2.261 | -1.42  | 2/6     | 1/5      | -0.10/-1.56 | False    | False                                | -23.115 |   1.646 | 0.464 |            0 |
+| V08          | 2.773 | 2.616 |  2.365 | -0.007 | 3/6     | 2/5      | -0.07/0.09  | False    | False                                | -24.835 |   1.736 | 0.468 |            4 |
+| V09          | 2.665 | 2.508 |  2.256 | -0.988 | 2/6     | 1/5      | 0.71/-2.73  | False    | False                                | -27.011 |   1.381 | 0.462 |            0 |
+| V10          | 2.736 | 2.578 |  2.325 | -0.762 | 3/6     | 3/5      | 0.31/-1.03  | False    | False                                | -24.961 |   1.637 | 0.467 |            2 |
+| V11          | 2.755 | 2.597 |  2.344 | -0.459 | 3/6     | 2/5      | 0.29/-0.68  | False    | False                                | -24.688 |   1.624 | 0.467 |            4 |
+| N02b         | 2.336 | 2.163 |  1.886 | -3.325 | 1/6     | 1/5      | -3.74/-2.77 | False    | False                                | -34.422 |   0.986 | 0.517 |            0 |
+| N03b         | 2.556 | 2.396 |  2.141 | -1.878 | 2/6     | 2/5      | -2.17/-0.99 | False    | False                                | -34.274 |   0.962 | 0.466 |            0 |
+| N02s         | 2.267 | 2.02  |  1.626 | -4.266 | 0/6     | 1/5      | -4.50/-2.98 | False    | False                                | -34.21  |   0.858 | 0.615 |            0 |
+| N02s_rw0.15  | 2.52  | 2.31  |  1.976 | -3.837 | 0/6     | 1/5      | -2.26/-1.49 | False    | False                                | -28.131 |   1.252 | 0.556 |            0 |
+| N02s_rw0.35  | 1.937 | 1.653 |  1.2   | -4.721 | 0/6     | 0/5      | -7.45/-4.92 | False    | False                                | -44.371 |   0.44  | 0.673 |            0 |
+| W05          | 2.736 | 2.572 |  2.309 | -0.538 | 3/6     | 3/5      | -0.03/-0.60 | False    | False                                | -26.013 |   1.416 | 0.508 |            0 |
+| W06          | 2.811 | 2.668 |  2.438 |  7.284 | 6/6     | 5/5      | 0.28/0.30   | True     | ADOPT (cost-only)                    | -24.872 |   1.772 | 0.427 |            8 |
+| W06_band0.02 | 2.8   | 2.655 |  2.422 |  7.019 | 6/6     | 5/5      | 0.18/0.23   | True     | ADOPT (cost-only)                    | -25.001 |   1.764 | 0.432 |            8 |
+| W06_band0.05 | 2.817 | 2.674 |  2.446 |  6.209 | 6/6     | 5/5      | 0.34/0.31   | True     | ADOPT (cost-only)                    | -24.807 |   1.778 | 0.424 |            8 |
+| W07          | 2.787 | 2.629 |  2.377 |  1.064 | 3/6     | 4/5      | 0.17/0.02   | False    | False                                | -25.009 |   1.719 | 0.469 |            5 |
+| W08          | 2.502 | 2.314 |  2.013 | -1.677 | 2/6     | 2/5      | -1.09/-3.26 | False    | False                                | -30.181 |   0.992 | 0.542 |            0 |
+| W09          | 2.476 | 2.263 |  1.922 | -1.682 | 1/6     | 1/5      | -0.26/-4.74 | False    | False                                | -27.415 |   1.072 | 0.578 |            0 |
+| W10_b0.15    | 2.758 | 2.608 |  2.368 | -1.095 | 3/6     | 1/5      | -0.02/-0.25 | False    | False                                | -25.41  |   1.659 | 0.449 |            1 |
+| W10          | 2.716 | 2.571 |  2.339 | -1.605 | 3/6     | 3/5      | -0.63/-0.18 | False    | False                                | -25.092 |   1.58  | 0.441 |            0 |
+| W10_b0.5     | 2.751 | 2.612 |  2.389 | -0.396 | 3/6     | 1/5      | -0.12/-0.23 | False    | False                                | -25.194 |   1.78  | 0.437 |            2 |
+| W11          | 2.784 | 2.655 |  2.449 |  0.266 | 3/6     | 3/5      | -0.10/0.31  | False    | False                                | -24.304 |   1.69  | 0.39  |            6 |
+| W12          | 2.827 | 2.688 |  2.467 |  7.216 | 6/6     | 5/5      | 0.33/0.49   | True     | passes vs B-MV; plateau vs W06 FAILS | -24.941 |   1.787 | 0.411 |            8 |
 
 Rationales and pre-registration are in `trials.csv`. Walk-forward results are in `walkforward.csv`.
 
