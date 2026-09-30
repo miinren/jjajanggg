@@ -1,0 +1,7 @@
+id,name,part,rationale,params,SR8clk,SR8bp,SR12bp,t_vs_B,years,groups,regimes_up_dn,partition_adopt,mdd_at2pct,minYrSR,cvar5_bp_matched,dCVaR_bp,null_p_dCVaR,worst20_bp_matched,verdict
+P1a,short_minvar_T19,1,min-variance short leg on 336h residual cov; cuts dollars in high-vol/high-corr shorts -> thinner tails,shrink=0.5 cap=2x e,2.720,2.554,2.290,0.85,3/6,3/5,0.94/1.95,False,-26.59,1.74,351.2,+15.6,0/60 (mv null),2072.5,PASS prereg risk rule (not a mean improvement)
+P1b,short_invvol_T17,1,inverse idio-vol short leg,clip=[0.5e 2e],2.637,2.504,2.292,0.86,4/6,3/5,0.46/0.86,False,-25.41,1.44,360.4,+6.4,2/60 (iv null),1829.6,marginal PASS prereg risk rule
+P2a,U50,2,wider pool of jumpy shortable names (alpha lives in less-liquid names),lq>0.5,2.611,2.485,2.285,0.22,3/6,2/5,6.72/-7.82,False,-34.01,1.54,353.8,+12.9,n/a,1743.5,FAIL
+P2b,U60,2,same,lq>0.6,2.270,2.149,1.955,-1.60,2/6,1/5,1.33/-7.68,False,-31.48,0.99,371.1,-4.4,n/a,1960.3,FAIL
+P2c,U75,2,narrower control,lq>0.75,2.136,2.026,1.851,-1.94,1/6,1/5,-2.21/-5.96,False,-41.75,0.76,365.5,+1.3,n/a,2964.0,FAIL
+P2d,SPLIT,2,wider shorts only; longs stay liquid (execution),longs lq>2/3; shorts lq>0.5,2.443,2.317,2.117,-0.56,3/6,1/5,4.05/-7.81,False,-33.63,1.29,363.5,+3.3,n/a,1992.2,FAIL
