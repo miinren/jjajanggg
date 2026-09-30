@@ -95,6 +95,18 @@ def run(tid):
         f, H = EXEC[tid]; df, cm = avg8(per_offset=per, execf=f, H=H); extra = None
     elif tid.startswith("V"):
         kw, frac = filt(tid); df, cm = avg8(per_offset=per, **kw); extra = dict(blocked_frac_M=round(float(frac), 4))
+    elif tid == "N02s":         # flow72 sleeve blended into B-MV at matched vol (rw 0.25; 0.15/0.35 sensitivity)
+        sc = nscore("N02w1.0"); sdf = scm = None; sper = {}
+        for off in range(8):
+            d, c = ext4.book(D, sc, offset=off, N=20, NS=20, short_frac=0.5, stop=0.2); sper[off] = d
+            sdf = d / 8 if sdf is None else sdf + d / 8; scm = c / np.float32(8) if scm is None else scm + c / np.float32(8)
+        k = cut(dfB.net).std() / cut(sdf.net).std(); ss = stats(sdf)
+        print("sleeve alone SR %.2f corr w/ B-MV %.2f" % (ss["SR"], cut(sdf.net).corr(cut(dfB.net))), flush=True)
+        for rw in (0.25, 0.15, 0.35):
+            df = dfB * (1 - rw) + sdf * (rw * k); cm = cB * np.float32(1 - rw) + scm * np.float32(rw * k)
+            per = {o: perB[o] * (1 - rw) + sper[o] * (rw * k) for o in range(8)}
+            evaluate(tid if rw == 0.25 else f"N02s_rw{rw}", df, cm, per, dict(sleeve_SR=round(ss["SR"], 3), rw=rw))
+        return
     elif tid.startswith("N"):
         sc = nscore(tid); df = cm = None
         for off in range(8):
