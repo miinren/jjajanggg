@@ -104,6 +104,11 @@ def run(tid):
         f, H = EXEC[HT[tid]]; df, cm = avg8(per_offset=per, execf=f, H=H, hedge_target=True); extra = dict(base_policy=HT[tid])
     elif tid.startswith("V"):
         kw, frac = filt(tid); df, cm = avg8(per_offset=per, **kw); extra = dict(blocked_frac_M=round(float(frac), 4))
+    elif tid.startswith("W10"):
+        band = float(tid.split("_b")[1]) if "_b" in tid else 0.30
+        df, cm = avg8(per_offset=per, rew_band=band); extra = dict(rew_band=band)
+    elif tid == "W11":
+        df, cm = avg8(per_offset=per, hedge_band=0.03, rew_band=0.30, execf=EXEC["E02"][0], H=EXEC["E02"][1]); extra = None
     elif tid == "W06":
         df, cm = avg8(per_offset=per, hedge_band=0.03); extra = dict(hedge_to=round(float(cut(df.to_hedge).mean()), 4))
     elif tid in ("W09", "W08"):

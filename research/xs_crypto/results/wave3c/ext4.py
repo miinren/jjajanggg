@@ -18,7 +18,7 @@ import cloud_harness as h
 
 def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0.40, long_stop=0.40, stops=True,
          hedge=1.0, leg_weights=None, elig=None, short_frac=0.5, cost=h.COST, offset=0,
-         execf=None, H=0, entry_ok_s=None, entry_ok_l=None, hedge_target=False, hedge_band=None):
+         execf=None, H=0, entry_ok_s=None, entry_ok_l=None, hedge_target=False, hedge_band=None, rew_band=None):
     NS = N if NS is None else NS
     idx = D.idx; T, K = len(idx), len(D.cols)
     SC = np.asarray(score, dtype=float)
@@ -56,6 +56,9 @@ def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0
                     if len(shorts): nw[shorts] = -short_frac / len(shorts)
                 else:
                     wl, ws = leg_weights(i, longs, shorts); nw[longs] = wl; nw[shorts] = -ws
+                if rew_band is not None:     # W10: keep the old weight of continuing same-side names when the change is small
+                    keep = (np.sign(nw) == np.sign(w)) & (nw != 0) & (np.abs(nw - w) < rew_band * np.abs(w))
+                    nw[keep] = w[keep]
                 held_l, held_s = longs, shorts; banned = set()
                 if execf is None:
                     new = (np.sign(nw) != np.sign(w)) & (nw != 0); lc[new] = 0.0; lc[nw == 0] = 0.0
