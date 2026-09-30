@@ -5,6 +5,12 @@ dfB, cB, perB = base()
 T_ = len(D.idx); SQ3 = np.sqrt(3)
 
 # ---------------- topic 1: execution policies ----------------
+def minvar_both(i, longs, shorts):      # W05: minvar_floor on BOTH legs (long leg 0.45)
+    _, ws = minvar_floor(i, longs, shorts)
+    if len(longs) < 2: return np.full(len(longs), 0.45 / max(1, len(longs))), ws
+    _, wl = minvar_floor(i, shorts, longs)            # reuse: second arg treated as the leg to weight
+    return 0.45 * wl / 0.55, ws
+
 def ttype(w0, wt):
     if wt < 0 and w0 >= 0: return "SE"
     if w0 < 0 and wt > w0: return "SX"
@@ -34,7 +40,7 @@ EXEC = {
     "E12": (policy({"SX": R_SX, "LE": R_LE}), 4),
     "E13": (policy({"SE": R_SE[1], "SX": R_SX, "LE": R_LE, "LX": R_LX}), 4),
 }
-HT = {"E14": "E12", "E15": "E08", "E16": "E02"}   # same policy, hedge traded once to the TARGET beta
+HT = {"E14": "E12", "E15": "E08", "E16": "E02", "W07": "E10"}   # same policy, hedge traded once to the TARGET beta
 # ---------------- topic 3: entry filters (True = allowed to enter) ----------------
 _F = {}
 def feats():
@@ -98,6 +104,14 @@ def run(tid):
         f, H = EXEC[HT[tid]]; df, cm = avg8(per_offset=per, execf=f, H=H, hedge_target=True); extra = dict(base_policy=HT[tid])
     elif tid.startswith("V"):
         kw, frac = filt(tid); df, cm = avg8(per_offset=per, **kw); extra = dict(blocked_frac_M=round(float(frac), 4))
+    elif tid == "W06":
+        df, cm = avg8(per_offset=per, hedge_band=0.03); extra = dict(hedge_to=round(float(cut(df.to_hedge).mean()), 4))
+    elif tid == "W05":
+        df = cm = None
+        for off in range(8):
+            d, c = ext4.book(D, S0, offset=off, leg_weights=minvar_both, **BK); per[off] = d
+            df = d / 8 if df is None else df + d / 8; cm = c / np.float32(8) if cm is None else cm + c / np.float32(8)
+        extra = None
     elif tid == "N02s":         # flow72 sleeve blended into B-MV at matched vol (rw 0.25; 0.15/0.35 sensitivity)
         sc = nscore("N02w1.0"); sdf = scm = None; sper = {}
         for off in range(8):

@@ -18,7 +18,7 @@ import cloud_harness as h
 
 def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0.40, long_stop=0.40, stops=True,
          hedge=1.0, leg_weights=None, elig=None, short_frac=0.5, cost=h.COST, offset=0,
-         execf=None, H=0, entry_ok_s=None, entry_ok_l=None, hedge_target=False):
+         execf=None, H=0, entry_ok_s=None, entry_ok_l=None, hedge_target=False, hedge_band=None):
     NS = N if NS is None else NS
     idx = D.idx; T, K = len(idx), len(D.cols)
     SC = np.asarray(score, dtype=float)
@@ -27,7 +27,7 @@ def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0
     w = np.zeros(K); held_l, held_s, banned = [], [], set(); lc = np.zeros(K); hp = 0.0
     lp, sp, hpnl, fund, to, toh = (np.zeros(T) for _ in range(6)); coin = np.zeros((T, K), np.float32)
     ln_up = np.log(1 + stop); ln_dn = np.log(1 - long_stop) if long_stop is not None and long_stop < 1 else -np.inf
-    pend = np.zeros(K, bool); w0 = np.zeros(K); wt = np.zeros(K); i0 = -1
+    pend = np.zeros(K, bool); w0 = np.zeros(K); wt = np.zeros(K); i0 = -1; hforce = True
     for i in range(T):
         if reb[i]:
             el = np.flatnonzero(E[i] & np.isfinite(SC[i]))
@@ -87,7 +87,7 @@ def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0
                 to[i] += np.abs(w[hit]).sum()
                 for s in np.flatnonzero(hit & (w < 0)):
                     banned.add(s); held_s = [z for z in held_s if z != s]
-                w[hit] = 0.0; lc[hit] = 0.0; pend[hit] = False
+                w[hit] = 0.0; lc[hit] = 0.0; pend[hit] = False; hforce = True
     net = lp + sp + hpnl + fund - to * cost
     df = pd.DataFrame({"net": net, "long": lp, "short": sp, "hedge": hpnl, "fund": fund, "to": to, "to_hedge": toh}, index=idx).resample("D").sum()
     return df, coin
