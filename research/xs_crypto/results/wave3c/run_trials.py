@@ -106,6 +106,21 @@ def run(tid):
         kw, frac = filt(tid); df, cm = avg8(per_offset=per, **kw); extra = dict(blocked_frac_M=round(float(frac), 4))
     elif tid == "W06":
         df, cm = avg8(per_offset=per, hedge_band=0.03); extra = dict(hedge_to=round(float(cut(df.to_hedge).mean()), 4))
+    elif tid in ("W09", "W08"):
+        if tid == "W08": sc = np.load(f"{OUT}/W08_score.npy").astype(float)
+        else:                          # W09: inside cand_S permute S0 values so the LOWEST flow72 names get the highest scores
+            fl = nscore("N02w1.0").to_numpy(); S = S0.to_numpy(); M = D.M.to_numpy(); F = D.F.to_numpy(); sc = S.copy()
+            for i in range(len(D.idx)):
+                m = np.flatnonzero(M[i] & np.isfinite(S[i]))
+                if len(m) < 18: continue
+                nS = 20 if len(m) >= 40 else max(1, len(m) // 3); nL = 12 if len(m) >= 24 else max(1, len(m) // 3); x = min(8, max(2, (len(m) - nS - nL) // 2))
+                cS = np.array([c for c in m[np.argsort(-S[i, m])] if not F[i, c] < -5e-4][:nS + x])
+                sc[i, cS[np.argsort(fl[i, cS])]] = np.sort(S[i, cS])[::-1]
+        sc = pd.DataFrame(sc, index=D.idx, columns=D.cols); df = cm = None
+        for off in range(8):
+            d, c = ext4.book(D, sc, offset=off, leg_weights=minvar_floor, **BK); per[off] = d
+            df = d / 8 if df is None else df + d / 8; cm = c / np.float32(8) if cm is None else cm + c / np.float32(8)
+        extra = None
     elif tid == "W05":
         df = cm = None
         for off in range(8):

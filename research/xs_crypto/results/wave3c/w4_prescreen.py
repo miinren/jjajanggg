@@ -13,24 +13,26 @@ rows = np.flatnonzero((D.idx.hour % 8 == 7) & (np.arange(T) >= 800) & (np.arange
 res = {k: [] for k in ("W01", "W02", "W03L", "W03S", "W04")}; nveto = {"W01": [], "W04": []}; dts = []
 for i in rows:
     m = np.flatnonzero(M[i] & np.isfinite(S[i]))
-    if len(m) < 60: continue
+    if len(m) < 18: continue
+    nS = 20 if len(m) >= 40 else max(1, len(m) // 3); nL = 12 if len(m) >= 24 else max(1, len(m) // 3)   # book's small-universe rule
+    xS = min(8, max(2, (len(m) - nS - nL) // 2)); xL = xS
     fwd = CS[i + 9] - CS[i + 1]; fwdL = fwd - np.nan_to_num(F[i]) / 3
     o = m[np.argsort(S[i, m])]; calm = o; jumpy = o[::-1]
-    okS = [c for c in jumpy if not (F[i, c] < -5e-4)]; candS = np.array(okS[:28]); BS = candS[:20]
-    candL = calm[:20]; BL = candL[:12]
+    okS = [c for c in jumpy if not (F[i, c] < -5e-4)]; candS = np.array(okS[:nS + xS]); BS = candS[:nS]
+    candL = calm[:nL + xL]; BL = candL[:nL]
     pflow = pd.Series(FL[i, m], index=m).rank(pct=True)
     def swap(add, drop, f): return (np.mean(f[list(add)]) if len(add) else np.nan) - (np.mean(f[list(drop)]) if len(drop) else np.nan) if len(add) and len(drop) else np.nan
     # W01: long veto F < -5e-4
-    Lk = [c for c in candL if not (F[i, c] < -5e-4)][:12]; nveto["W01"].append(len(set(BL) - set(Lk)))
+    Lk = [c for c in candL if not (F[i, c] < -5e-4)][:nL]; nveto["W01"].append(len(set(BL) - set(Lk)))
     res["W01"].append(swap(set(Lk) - set(BL), set(BL) - set(Lk), fwdL))
     # W02: from candS drop the 8 lowest flow
-    keep = sorted(candS, key=lambda c: -pflow.get(c, 0.5))[:20]; keep = [c for c in candS if c in set(keep)]
+    keep = sorted(candS, key=lambda c: -pflow.get(c, 0.5))[:nS]; keep = [c for c in candS if c in set(keep)]
     res["W02"].append(swap(set(keep) - set(BS), set(BS) - set(keep), fwd))
     # W03: near-high tie-break both legs
-    nhL = sorted(candL, key=lambda c: -np.nan_to_num(NH[i, c], nan=-9))[:12]; res["W03L"].append(swap(set(nhL) - set(BL), set(BL) - set(nhL), fwdL))
-    nhS = sorted(candS, key=lambda c: np.nan_to_num(NH[i, c], nan=0))[:20]; res["W03S"].append(swap(set(nhS) - set(BS), set(BS) - set(nhS), fwd))
+    nhL = sorted(candL, key=lambda c: -np.nan_to_num(NH[i, c], nan=-9))[:nL]; res["W03L"].append(swap(set(nhL) - set(BL), set(BL) - set(nhL), fwdL))
+    nhS = sorted(candS, key=lambda c: np.nan_to_num(NH[i, c], nan=0))[:nS]; res["W03S"].append(swap(set(nhS) - set(BS), set(BS) - set(nhS), fwd))
     # W04: long veto pct(flow) < 0.10
-    Lk4 = [c for c in candL if not (pflow.get(c, 0.5) < 0.10)][:12]; nveto["W04"].append(len(set(BL) - set(Lk4)))
+    Lk4 = [c for c in candL if not (pflow.get(c, 0.5) < 0.10)][:nL]; nveto["W04"].append(len(set(BL) - set(Lk4)))
     res["W04"].append(swap(set(Lk4) - set(BL), set(BL) - set(Lk4), fwdL))
     dts.append(D.idx[i])
 pred = {"W01": 1, "W02": -1, "W03L": 1, "W03S": -1, "W04": 1}

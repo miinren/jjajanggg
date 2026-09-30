@@ -79,7 +79,11 @@ def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0
         lp[i] = cp[w > 0].sum(); sp[i] = cp[w < 0].sum(); fund[i] = -(w @ D.Fh[i])
         if hedge:
             wh = np.where(pend, wt, w) if (hedge_target and execf is not None) else w
-            hh = -hedge * (wh @ D.B[i]); hpnl[i] = hh * D.rbn[i]; to[i] += abs(hh - hp); toh[i] = abs(hh - hp); hp = hh
+            hh = -hedge * (wh @ D.B[i])
+            if hedge_band is not None:      # W06: hold the hedge unless rebalance/stop or drift beyond the band
+                if not (reb[i] or hforce or abs(hh - hp) > hedge_band): hh = hp
+                hforce = False
+            hpnl[i] = hh * D.rbn[i]; to[i] += abs(hh - hp); toh[i] = abs(hh - hp); hp = hh
         if stops:
             act = w != 0; lc[act] += D.Rn[i, act]
             hit = act & (((w < 0) & (lc >= ln_up)) | ((w > 0) & (lc <= ln_dn)))
