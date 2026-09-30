@@ -1,0 +1,78 @@
+T19 N=6: SR 1.552 @8 1.381 @12 1.109 mdd2 -37.3 minYr 0.54 yearly 3.07/0.54/0.92/1.35/2.12/1.69 | vs N=8 t -0.18 yrs 3/6 grp 3/5
+T20 N=10: SR 1.477 @8 1.311 @12 1.045 mdd2 -39.7 minYr 0.53 yearly 3.24/0.53/0.85/1.31/1.75/1.58 | vs N=8 t -1.12 yrs 1/6 grp 2/5
+  alt = np.where(Mn, g, np.nan); alt = np.nanmean(alt, 1)
+  e = y.to_numpy() - X @ b; r2 = 1 - e.var() / y.var()
+  return mu / np.sqrt(lrv / n)
+| book    | series                                | factors     |   alpha_bp |   t_alpha |   b_BTC |   b_ETH |      R2 |   b_ALT |
+|---------|---------------------------------------|-------------|------------|-----------|---------|---------|---------|---------|
+| B-MV    | long (per $ long)                     | BTC+ETH     |    -11.761 |    -2.451 |   0.304 |   0.655 |   0.701 | nan     |
+| B-MV    | long (per $ long)                     | BTC+ETH+ALT |     -5.629 |    -1.591 |   0.067 |   0.201 |   0.841 |   0.606 |
+| B-MV    | long+fund_l (per $)                   | BTC+ETH     |    -14.089 |    -3.011 |   0.304 |   0.655 |   0.702 | nan     |
+| B-MV    | long+fund_l (per $)                   | BTC+ETH+ALT |     -7.969 |    -2.295 |   0.067 |   0.202 |   0.841 |   0.605 |
+| B-MV    | short                                 | BTC+ETH     |     15.382 |     4.324 |  -0.176 |  -0.417 |   0.603 | nan     |
+| B-MV    | short                                 | BTC+ETH+ALT |      9.682 |     4.313 |   0.045 |   0.005 |   0.87  |  -0.563 |
+| B-MV    | hedge                                 | BTC+ETH     |      1.372 |     1.357 |   0.203 |   0.02  |   0.694 | nan     |
+| B-MV    | hedge                                 | BTC+ETH+ALT |      1.588 |     1.548 |   0.195 |   0.004 |   0.699 |   0.021 |
+| B-MV    | long+short+hedge (pre-fund, pre-cost) | BTC+ETH     |     11.461 |     3.704 |   0.164 |  -0.103 |   0.045 | nan     |
+| B-MV    | long+short+hedge (pre-fund, pre-cost) | BTC+ETH+ALT |      8.737 |     3.158 |   0.27  |   0.099 |   0.278 |  -0.269 |
+| B-MV    | net                                   | BTC+ETH     |     10.084 |     3.25  |   0.165 |  -0.103 |   0.045 | nan     |
+| B-MV    | net                                   | BTC+ETH+ALT |      7.361 |     2.636 |   0.271 |   0.098 |   0.277 |  -0.269 |
+| B-MV-N8 | long (per $ long)                     | BTC+ETH     |     -9.368 |    -1.946 |   0.287 |   0.643 |   0.692 | nan     |
+| B-MV-N8 | long (per $ long)                     | BTC+ETH+ALT |     -3.502 |    -0.968 |   0.06  |   0.208 |   0.825 |   0.58  |
+| B-MV-N8 | long+fund_l (per $)                   | BTC+ETH     |    -11.476 |    -2.441 |   0.287 |   0.643 |   0.692 | nan     |
+| B-MV-N8 | long+fund_l (per $)                   | BTC+ETH+ALT |     -5.625 |    -1.58  |   0.06  |   0.21  |   0.825 |   0.578 |
+| B-MV-N8 | short                                 | BTC+ETH     |     15.912 |     4.453 |  -0.176 |  -0.417 |   0.603 | nan     |
+| B-MV-N8 | short                                 | BTC+ETH+ALT |     10.204 |     4.45  |   0.045 |   0.005 |   0.87  |  -0.564 |
+| B-MV-N8 | hedge                                 | BTC+ETH     |      1.2   |     1.107 |   0.217 |   0.019 |   0.696 | nan     |
+| B-MV-N8 | hedge                                 | BTC+ETH+ALT |      1.457 |     1.329 |   0.207 |   0     |   0.701 |   0.025 |
+| B-MV-N8 | long+short+hedge (pre-fund, pre-cost) | BTC+ETH     |     12.896 |     4.14  |   0.17  |  -0.109 |   0.048 | nan     |
+| B-MV-N8 | long+short+hedge (pre-fund, pre-cost) | BTC+ETH+ALT |     10.085 |     3.595 |   0.279 |   0.099 |   0.293 |  -0.278 |
+| B-MV-N8 | net                                   | BTC+ETH     |     11.428 |     3.659 |   0.171 |  -0.109 |   0.048 | nan     |
+| B-MV-N8 | net                                   | BTC+ETH+ALT |      8.62  |     3.045 |   0.28  |   0.099 |   0.292 |  -0.278 |
+| LO12    | long (per $ long)                     | BTC+ETH     |    -11.936 |    -2.476 |   0.304 |   0.656 |   0.7   | nan     |
+| LO12    | long (per $ long)                     | BTC+ETH+ALT |     -5.776 |    -1.622 |   0.065 |   0.2   |   0.84  |   0.609 |
+| LO12    | long+fund_l (per $)                   | BTC+ETH     |    -14.263 |    -3.036 |   0.304 |   0.657 |   0.701 | nan     |
+| LO12    | long+fund_l (per $)                   | BTC+ETH+ALT |     -8.116 |    -2.324 |   0.066 |   0.201 |   0.84  |   0.608 |
+| LO12    | short                                 | BTC+ETH     |      0     |   nan     |   0     |   0     | nan     | nan     |
+| LO12    | short                                 | BTC+ETH+ALT |      0     |   nan     |   0     |   0     | nan     |   0     |
+| LO12    | hedge                                 | BTC+ETH     |      6.843 |     2.546 |  -0.927 |  -0.086 |   0.855 | nan     |
+| LO12    | hedge                                 | BTC+ETH+ALT |      5.843 |     2.166 |  -0.888 |  -0.012 |   0.861 |  -0.099 |
+| LO12    | long+short+hedge (pre-fund, pre-cost) | BTC+ETH     |     -5.093 |    -1.06  |  -0.623 |   0.57  |   0.31  | nan     |
+| LO12    | long+short+hedge (pre-fund, pre-cost) | BTC+ETH+ALT |      0.068 |     0.018 |  -0.823 |   0.188 |   0.581 |   0.51  |
+| LO12    | net                                   | BTC+ETH     |     -5.668 |    -1.198 |  -0.624 |   0.571 |   0.311 | nan     |
+| LO12    | net                                   | BTC+ETH+ALT |     -0.505 |    -0.138 |  -0.824 |   0.188 |   0.582 |   0.51  |
+| LIVE    | long (per $ long)                     | BTC+ETH     |    -14.24  |    -2.877 |   0.309 |   0.675 |   0.704 | nan     |
+| LIVE    | long (per $ long)                     | BTC+ETH+ALT |     -7.802 |    -2.204 |   0.06  |   0.198 |   0.851 |   0.636 |
+| LIVE    | long+fund_l (per $)                   | BTC+ETH     |    -16.725 |    -3.461 |   0.309 |   0.675 |   0.705 | nan     |
+| LIVE    | long+fund_l (per $)                   | BTC+ETH+ALT |    -10.302 |    -2.961 |   0.06  |   0.199 |   0.851 |   0.635 |
+| LIVE    | short                                 | BTC+ETH     |     11.309 |     3.032 |  -0.153 |  -0.392 |   0.545 | nan     |
+| LIVE    | short                                 | BTC+ETH+ALT |      5.339 |     2.253 |   0.078 |   0.05  |   0.854 |  -0.59  |
+| LIVE    | hedge                                 | BTC+ETH     |      1.541 |     1.453 |   0.11  |   0.014 |   0.4   | nan     |
+| LIVE    | hedge                                 | BTC+ETH+ALT |      1.636 |     1.53  |   0.106 |   0.007 |   0.401 |   0.009 |
+| LIVE    | long+short+hedge (pre-fund, pre-cost) | BTC+ETH     |      5.731 |     1.678 |   0.111 |  -0.04  |   0.021 | nan     |
+| LIVE    | long+short+hedge (pre-fund, pre-cost) | BTC+ETH+ALT |      3.074 |     0.974 |   0.214 |   0.157 |   0.201 |  -0.263 |
+| LIVE    | net                                   | BTC+ETH     |      4.983 |     1.455 |   0.111 |  -0.04  |   0.022 | nan     |
+| LIVE    | net                                   | BTC+ETH+ALT |      2.329 |     0.733 |   0.214 |   0.157 |   0.2   |  -0.262 |
+B-MV: funding total 1.34 = long -1.05 + short&hedge 3.03 bp/day; long price 4.23
+B-MV-N8: funding total 1.41 = long -0.95 + short&hedge 3.03 bp/day; long price 5.03
+LO12: funding total 1.03 = long -2.33 + short&hedge 0.00 bp/day; long price 9.25
+
+D2 LIVE rules (short stop off, clock 0): forward simple return of the coin after a short first reaches the adverse move (%, + = bad for the short)
+| adverse_move   |    n |   fwd24_mean |   fwd72_mean |   fwd7d_mean |   fwd7d_median |   fwd7d_beta_adj |   P_further20_in72h |   P_fall20_in7d |
+|----------------|------|--------------|--------------|--------------|----------------|------------------|---------------------|-----------------|
+| +0%            | 3473 |        -0.43 |        -0.69 |        -0.08 |          -3.59 |            -1.36 |               14.2  |           13.85 |
+| +20%           |  796 |         0.47 |         3.26 |         2.72 |          -6.38 |             1.17 |               27.14 |           23.74 |
+| +30%           |  510 |         2.02 |         6.34 |         5.85 |          -5.35 |             3.59 |               32.94 |           25.29 |
+| +50%           |  285 |         2.41 |         8.27 |         4.21 |          -6.87 |             2.58 |               32.98 |           29.47 |
+| +75%           |  163 |         3    |        10.7  |         5.91 |          -6.19 |             5.75 |               37.42 |           31.29 |
+| +100%          |  113 |        -0.66 |         9.19 |         3.02 |         -10.75 |             2.62 |               38.05 |           35.4  |
+
+D2 B-MV rules (short stop off, clock 0): forward simple return of the coin after a short first reaches the adverse move (%, + = bad for the short)
+| adverse_move   |    n |   fwd24_mean |   fwd72_mean |   fwd7d_mean |   fwd7d_median |   fwd7d_beta_adj |   P_further20_in72h |   P_fall20_in7d |
+|----------------|------|--------------|--------------|--------------|----------------|------------------|---------------------|-----------------|
+| +0%            | 3414 |        -0.36 |        -0.59 |        -0.04 |          -3.65 |            -1.34 |               14.53 |           13.97 |
+| +20%           |  790 |         0.51 |         3.47 |         2.89 |          -6.35 |             1.25 |               27.34 |           23.92 |
+| +30%           |  512 |         2.01 |         6.23 |         5.67 |          -5.96 |             3.44 |               32.81 |           25.59 |
+| +50%           |  284 |         2.54 |         8.48 |         4.29 |          -6.87 |             2.76 |               33.1  |           29.23 |
+| +75%           |  164 |         2.98 |        10.29 |         5.57 |          -6.57 |             5.42 |               37.2  |           31.71 |
+| +100%          |  113 |        -0.66 |         9.19 |         3.02 |         -10.75 |             2.62 |               38.05 |           35.4  |

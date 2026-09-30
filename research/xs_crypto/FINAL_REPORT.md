@@ -1,5 +1,13 @@
 # XS crypto low-idio-vol book: final research summary (2026-09-29/30)
 
+> ## Wave 4 update (2026-09-30, `results/wave4/REPORT.md`): structure re-checked under realistic accounting
+> - **The alpha is in the short leg after all.** Against BTC+ETH the B-MV short leg has alpha +15 bp/day (t 4.3), while the long leg has −12 (t −2.5). The raw "long + hedge" P&L in the box below is bull-market beta.
+> - Long-only, reduced-short and funding-carry short books all lose to B-MV and are never picked by pseudo-holdout. **B-MV stays.**
+> - The pipeline's only change is 8 longs: pooled OOS 2023–25 SR 1.54 vs B-MV 1.46 (t 1.1, not significant) vs LIVE 0.78.
+> - Score fw 0.25 / L 336 is kept.
+> - Realistic live SR is about 0.8–1.2 (with BTC funding on the hedge now included).
+> - Shorts that are +20% or more against you keep drifting against you on average, so **cover at +20%**.
+
 > ## ⚠ CORRECTION (2026-09-30, wave 3c, independently verified): every Sharpe in this research is inflated ~2x by log-return accounting
 > The harness books P&L as weight × **log** return. Real P&L is weight × **simple** return. For shorts, log accounting overstates profit by about |w|·r²/2 per hour, and this book shorts the most volatile coins, so the bias manufactures most of the "short-leg alpha".
 > I re-ran it myself (single clock, simple returns):
