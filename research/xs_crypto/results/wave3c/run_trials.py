@@ -64,6 +64,18 @@ def filt(tid):
     frac = 1 - mask[D.M.to_numpy()].mean()
     return kw, frac
 
+def nscore(tid):
+    if tid.startswith("N02"):
+        z = np.load("/root/work/xs_hourly_2020_2025.npz", allow_pickle=True)
+        Q = pd.DataFrame(z["quote_volume"], index=D.idx, columns=D.cols).astype(float); del z
+        qr = (Q / Q.rolling(168, min_periods=100).mean().shift(1)).replace([np.inf, -np.inf], np.nan).fillna(0).to_numpy(); del Q
+        X = pd.DataFrame(RS * qr, index=D.idx, columns=D.cols).rolling(72, min_periods=1).sum()
+    else:
+        X = D.idio(336) ** 2 / D.R1.rolling(336, min_periods=200).var()
+    p = X.where(D.M).rank(1, pct=True).fillna(0.5)
+    w = float(tid.split("w")[1]) if "w" in tid else 0.15
+    return (1 - w) * S0 + w * p
+
 def evaluate(tid, df, cm, per, extra=None):
     s = stats(df); r = h.partition_test(D, (df, cm), (dfB, cB), verbose=False)
     clk = {o: round(srx(cut(d.net)), 3) for o, d in per.items()} if per else {}
@@ -83,6 +95,12 @@ def run(tid):
         f, H = EXEC[tid]; df, cm = avg8(per_offset=per, execf=f, H=H); extra = None
     elif tid.startswith("V"):
         kw, frac = filt(tid); df, cm = avg8(per_offset=per, **kw); extra = dict(blocked_frac_M=round(float(frac), 4))
+    elif tid.startswith("N"):
+        sc = nscore(tid); df = cm = None
+        for off in range(8):
+            d, c = ext4.book(D, sc, offset=off, leg_weights=minvar_floor, **BK); per[off] = d
+            df = d / 8 if df is None else df + d / 8; cm = c / np.float32(8) if cm is None else cm + c / np.float32(8)
+        extra = None
     elif tid.startswith("F"):      # single-clock book vs the 8-clock-averaged base
         off = int(tid.split("_o")[1]); df, cm = ext4.book(D, S0, offset=off, leg_weights=minvar_floor, **BK); per = None
         extra = dict(offset=off)
