@@ -18,7 +18,7 @@ R1 = D.R1.to_numpy(); tv = pd.DataFrame(R1).rolling(336, min_periods=200).var().
 F["N03"] = D.idio(336).to_numpy() ** 2 / tv; del tv, R1; gc.collect()
 r24 = roll(RS, 24); v24 = pd.DataFrame(r24).rolling(336, min_periods=200).var().to_numpy(); del r24
 v1 = pd.DataFrame(RS).rolling(336, min_periods=200).var().to_numpy(); F["N05"] = v24 / (24 * v1); del v24, v1; gc.collect()
-p0 = (D.idx.hour % 8 == 0).to_numpy()[:, None].astype(float)
+p0 = np.asarray(D.idx.hour % 8 == 0)[:, None].astype(float)
 a = roll(RS * p0, 720) / 90.0; b = roll(RS * (1 - p0), 720) / 630.0; F["N06"] = a - b; del a, b; gc.collect()
 # N01 peer momentum, computed only at screen rows
 N01 = np.full((T, RS.shape[1]), np.nan)

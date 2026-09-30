@@ -8,6 +8,7 @@ import ext3, ext4
 OUT = "/root/work/out3c"; os.makedirs(OUT, exist_ok=True)
 
 def minvar_floor(i, longs, shorts):             # = results/wave2/s3_floor.py minus the CV bookkeeping
+    if len(shorts) == 0: return np.full(len(longs), 0.45 / max(1, len(longs))), np.zeros(0)   # empty-leg guard (never hit by B-MV)
     a, b = minvar(i, longs, shorts); x = b / 0.55; e = 1 / len(shorts)
     for _ in range(10): x = np.clip(x, 0.4 * e, 2 * e); x /= x.sum()
     return a, 0.55 * x

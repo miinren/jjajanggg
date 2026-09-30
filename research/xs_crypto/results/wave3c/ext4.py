@@ -25,7 +25,7 @@ def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0
     E = np.array((D.M if elig is None else elig) & D.idio(L).notna() & D.bB.notna(), dtype=bool); E[:, D.ib] = False
     reb = ((idx.hour + 1 + offset) % every == 0) if every > 1 else np.ones(T, bool)
     w = np.zeros(K); held_l, held_s, banned = [], [], set(); lc = np.zeros(K); hp = 0.0
-    lp, sp, hpnl, fund, to = (np.zeros(T) for _ in range(5)); coin = np.zeros((T, K), np.float32)
+    lp, sp, hpnl, fund, to, toh = (np.zeros(T) for _ in range(6)); coin = np.zeros((T, K), np.float32)
     ln_up = np.log(1 + stop); ln_dn = np.log(1 - long_stop) if long_stop is not None and long_stop < 1 else -np.inf
     pend = np.zeros(K, bool); w0 = np.zeros(K); wt = np.zeros(K); i0 = -1
     for i in range(T):
@@ -78,7 +78,7 @@ def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0
         cp = w * D.Rn[i]; coin[i] = cp
         lp[i] = cp[w > 0].sum(); sp[i] = cp[w < 0].sum(); fund[i] = -(w @ D.Fh[i])
         if hedge:
-            hh = -hedge * (w @ D.B[i]); hpnl[i] = hh * D.rbn[i]; to[i] += abs(hh - hp); hp = hh
+            hh = -hedge * (w @ D.B[i]); hpnl[i] = hh * D.rbn[i]; to[i] += abs(hh - hp); toh[i] = abs(hh - hp); hp = hh
         if stops:
             act = w != 0; lc[act] += D.Rn[i, act]
             hit = act & (((w < 0) & (lc >= ln_up)) | ((w > 0) & (lc <= ln_dn)))
@@ -88,5 +88,5 @@ def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0
                     banned.add(s); held_s = [z for z in held_s if z != s]
                 w[hit] = 0.0; lc[hit] = 0.0; pend[hit] = False
     net = lp + sp + hpnl + fund - to * cost
-    df = pd.DataFrame({"net": net, "long": lp, "short": sp, "hedge": hpnl, "fund": fund, "to": to}, index=idx).resample("D").sum()
+    df = pd.DataFrame({"net": net, "long": lp, "short": sp, "hedge": hpnl, "fund": fund, "to": to, "to_hedge": toh}, index=idx).resample("D").sum()
     return df, coin
