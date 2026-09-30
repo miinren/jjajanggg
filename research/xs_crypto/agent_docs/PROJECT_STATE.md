@@ -117,6 +117,16 @@ Every figure from waves 1–3b, and the pre-correction parts of 3c (for example 
 11. `lib4.score` uses `min_periods = 0.6L`, while S0 uses 200 at L=336. Wave R2 matched S0 exactly.
 12. A `pkill -f <script>` inside a bash command also kills the calling shell, because it matches its own command line. `pgrep -f` wait-loops self-match the same way. Kill by PID instead.
 
+## 6b. Latest: owner's lake research + cloud_handoff_1 (2026-09-30)
+- **Owner's lake research** (`rh_research` bundle; engine `pf_lib`) is stricter than ours. It adds realistic spreads and impact and share-hold accounting.
+  - The old live book: dev SR 0.53, **2026 holdout SR −1.17**. The live bot is **stopped**; $329 sits in USDT.
+  - About 1,000 variants have been tried across agents, so new results need **t ≥ 3**.
+- **`cloud_handoff_1/report.md`, Task A (beta-neutral betting-against-beta):**
+  - Rank IC is strong: low beta beats high beta even beta-adjusted, Spearman t ≈ 10 at 1 day.
+  - The Fama–MacBeth SML is flat (γ t ≈ −1).
+  - The beta-neutral BAB finalist has dev alpha t 1.53 (DSR 0.56). The 2025 one-look is SR 1.84, but about 45% of that is funding and it had a −22% month.
+  - **Not adoptable.** At most a paper-trade candidate.
+
 ## 7. Open items (priority order)
 1. **2026 holdout:** LIVE vs B-MV (N=12) vs B-MV-N8, realistic accounting, no tuning. Switch only if B-MV is not worse than LIVE.
    - Secondary lead: fw = 0.5, which was the ungated OOS pick (1.875 vs 1.462, t 1.77). It failed the gate, lost 2023 and is fragile at 12 bp.
