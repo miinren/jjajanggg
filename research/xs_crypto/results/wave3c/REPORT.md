@@ -32,7 +32,7 @@
 >
 > **So the recommendation (switch to B-MV, add the W06 hedge band) stands, but the realistic backtest SR is about 1.4–1.5, not 2.8.** At 12 bp it is about 1.0.
 >
-> **Follow-up (done for the book parameters in Wave R below; short 55%, NS=20 and the 20% stop confirmed, N=8 borderline).** The funding weight, the score's L=336 and the idio-vol construction are still un-re-checked under `simple=True, drift=True`. The bias favours short-heavy, high-vol-short choices, so some may be mis-tuned. The log-vs-simple gap also means any feature that tilts shorts toward volatile names looked better than it is. All relative results in this report compare books under the *same* accounting, so the sign of most verdicts should hold, but magnitudes on the short leg are overstated.
+> **Follow-up (done for the book parameters in Wave R below; short 55%, NS=20 and the 20% stop confirmed, N=8 borderline).** The funding weight, L=336 and the AR1-corrected idio-vol construction were re-checked in Wave R2 and are also confirmed. The bias favours short-heavy, high-vol-short choices, so some may be mis-tuned. The log-vs-simple gap also means any feature that tilts shorts toward volatile names looked better than it is. All relative results in this report compare books under the *same* accounting, so the sign of most verdicts should hold, but magnitudes on the short leg are overstated.
 
 Research only. Data runs 2020-03-15..2025-12-31 (the 2026 holdout was not touched). Every book is **8-clock averaged** and compared with **B-MV**
 (`ext3.book(D, S0, short_frac=0.55, stop=0.2, N=12, NS=20, leg_weights=minvar_floor)`). The new engine `ext4.py` reproduces B-MV
@@ -178,6 +178,22 @@ Each value is the effect of the rule's swap on forward 8h residual returns (bp),
 
 - **Reading.** The configuration chosen under log accounting survives correct accounting. The one exception is the long count: under correct accounting the long leg is a real earner (+4 bp/day), and concentrating it in the 8 calmest names helps on every clock, although it wins only 4 of 6 years.
 - **Suggestion.** Add N=8 alongside N=12 in the 2026 holdout check, using realistic accounting.
+
+## Wave R2: the score re-checked under realistic accounting (`realistic_score.py`, `realistic_score.txt`)
+- **Setup.** Same base and rule as wave R (B-MV + W06, simple returns + drift, SR 1.490). The score is rebuilt exactly (max diff 0 vs S0); only one ingredient changes at a time.
+
+| setting | neighbour | SR (8 / 12 bp) | t vs base | years / groups / clocks | long / short bp/day | walk-forward | verdict |
+|---|---|---|---|---|---|---|---|
+| funding weight 0.25 | 0.10 | 0.912 (0.755 / 0.503) | **−3.68** | 1/6, 1/5, 0/8 | 3.42 / −1.12 | 1.132 vs 1.162 | **keep 0.25** |
+| | 0.40 | 1.516 (1.318 / 1.001) | +0.16 | 4/6, 2/5, 5/8 | 4.22 / 1.85 | | (flat; deeper DD −38, worst yr 0.28) |
+| idio window 336h | 168h | 0.738 (0.558 / 0.271) | **−3.96** | 1/6, 0/5, 0/8 | 4.17 / −2.76 | picks 336h every year | **keep 336h** |
+| | 672h | 1.392 (1.245 / 1.009) | −0.49 | 2/6, 2/5, 2/8 | 4.55 / 1.45 | | |
+| AR1 correction on | off | 1.417 (1.253 / 0.992) | −1.28 | 3/6, 1/5, 2/8 | 4.38 / 1.66 | 1.080 vs 1.162 | **keep on** |
+
+- **Reading.** Every score ingredient survives correct accounting.
+- **Funding carries more of the edge than it seemed.** At 0.10 weight the short leg turns negative.
+- **A 168h idio window is a disaster:** the short leg makes −2.8 bp/day.
+- **Short-leg profit depends on the score.** It only exists when shorts are chosen on *long-window, AR1-corrected* idio vol plus funding. That means persistent lottery names with crowded longs, not recent jumpers.
 
 ### Wave 4, round 2 (idea agent round 2; red-team fixes)
 - **W10 no-trade band on small re-weights of continuing names** (band 0.15 / 0.30 / 0.50): t −1.10 / −1.61 / −0.40, 0–2/8 clocks. **FAIL.**
