@@ -34,6 +34,7 @@ EXEC = {
     "E12": (policy({"SX": R_SX, "LE": R_LE}), 4),
     "E13": (policy({"SE": R_SE[1], "SX": R_SX, "LE": R_LE, "LX": R_LX}), 4),
 }
+HT = {"E14": "E12", "E15": "E08", "E16": "E02"}   # same policy, hedge traded once to the TARGET beta
 # ---------------- topic 3: entry filters (True = allowed to enter) ----------------
 _F = {}
 def feats():
@@ -93,6 +94,8 @@ def run(tid):
     t0 = time.time(); per = {}
     if tid in EXEC:
         f, H = EXEC[tid]; df, cm = avg8(per_offset=per, execf=f, H=H); extra = None
+    elif tid in HT:
+        f, H = EXEC[HT[tid]]; df, cm = avg8(per_offset=per, execf=f, H=H, hedge_target=True); extra = dict(base_policy=HT[tid])
     elif tid.startswith("V"):
         kw, frac = filt(tid); df, cm = avg8(per_offset=per, **kw); extra = dict(blocked_frac_M=round(float(frac), 4))
     elif tid == "N02s":         # flow72 sleeve blended into B-MV at matched vol (rw 0.25; 0.15/0.35 sensitivity)

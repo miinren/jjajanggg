@@ -18,7 +18,7 @@ import cloud_harness as h
 
 def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0.40, long_stop=0.40, stops=True,
          hedge=1.0, leg_weights=None, elig=None, short_frac=0.5, cost=h.COST, offset=0,
-         execf=None, H=0, entry_ok_s=None, entry_ok_l=None):
+         execf=None, H=0, entry_ok_s=None, entry_ok_l=None, hedge_target=False):
     NS = N if NS is None else NS
     idx = D.idx; T, K = len(idx), len(D.cols)
     SC = np.asarray(score, dtype=float)
@@ -78,7 +78,8 @@ def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0
         cp = w * D.Rn[i]; coin[i] = cp
         lp[i] = cp[w > 0].sum(); sp[i] = cp[w < 0].sum(); fund[i] = -(w @ D.Fh[i])
         if hedge:
-            hh = -hedge * (w @ D.B[i]); hpnl[i] = hh * D.rbn[i]; to[i] += abs(hh - hp); toh[i] = abs(hh - hp); hp = hh
+            wh = np.where(pend, wt, w) if (hedge_target and execf is not None) else w
+            hh = -hedge * (wh @ D.B[i]); hpnl[i] = hh * D.rbn[i]; to[i] += abs(hh - hp); toh[i] = abs(hh - hp); hp = hh
         if stops:
             act = w != 0; lc[act] += D.Rn[i, act]
             hit = act & (((w < 0) & (lc >= ln_up)) | ((w > 0) & (lc <= ln_dn)))
