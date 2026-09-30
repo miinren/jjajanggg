@@ -27,7 +27,7 @@ add("p_beta168", pm(D.bB))
 sig = D.idio(168).shift(1); add("p_zmax8", pm((R.abs() / sig).rolling(8, min_periods=1).max())); del sig
 r24 = R.rolling(24).sum(); add("p_varratio", pm(r24.rolling(336, min_periods=200).var() / (24 * R.rolling(336, min_periods=200).var()))); del r24
 p0 = np.asarray(D.idx.hour % 8 == 0, float)[:, None]
-add("p_settledrift", pm(pd.DataFrame(RS * p0, index=D.idx).rolling(720).sum() / 90 - pd.DataFrame(RS * (1 - p0), index=D.idx).rolling(720).sum() / 630).set_axis(D.cols, axis=1))
+add("p_settledrift", pm(pd.DataFrame(RS * p0, index=D.idx, columns=D.cols).rolling(720).sum() / 90 - pd.DataFrame(RS * (1 - p0), index=D.idx, columns=D.cols).rolling(720).sum() / 630))
 add("univ_n", np.repeat(M.sum(1)[:, None], K, 1)); del R; gc.collect()
 X = np.column_stack([feats[k] for k in feats]); names = list(feats); del feats; gc.collect()
 # target: pct rank of 72h forward residual inside M
@@ -35,6 +35,7 @@ fwd = np.full(T, np.nan)[:, None] * np.ones((1, 1))
 Y = pd.DataFrame(np.where(np.arange(T)[:, None] + 73 < T, CS[np.minimum(np.arange(T) + 73, T - 1)] - CS[np.minimum(np.arange(T) + 1, T - 1)], np.nan)).where(M).rank(1, pct=True).to_numpy().ravel()[Mi].astype(np.float32)
 hr = D.idx.hour.to_numpy()[r_]; yr = D.idx.year.to_numpy()[r_]; tend = r_ + 73
 print("features", names, X.shape, "Y finite", int(np.isfinite(Y).sum()), flush=True)
+assert all(np.isfinite(X[:, k]).mean() > 0.5 for k in range(X.shape[1])), "degenerate feature"
 np.savez(f"{OUT}/W08_XY.npz", X=X, Y=Y, r_=r_, c_=c_)
 pred = np.full(len(Mi), np.nan, np.float32)
 for Yy in range(2021, 2026):
