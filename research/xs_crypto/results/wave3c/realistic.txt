@@ -1,0 +1,9 @@
+LIVE SR 0.710 @8 0.577 @12 0.363 bp 6.01 (L 3.73 S -0.81 H 3.99 F 1.57) to 0.451 mdd2 -49.7 minYr -0.15 yearly {2020: 2.57, 2021: -0.15, 2022: 0.07, 2023: 1.09, 2024: 0.98, 2025: 0.43}
+B SR 1.064 @8 0.912 @12 0.671 bp 9.71 (L 4.23 S 0.63 H 5.83 F 2.04) to 0.550 mdd2 -46.2 minYr 0.03 yearly {2020: 3.39, 2021: 0.03, 2022: 0.12, 2023: 1.24, 2024: 1.41, 2025: 0.9}
+B-MV SR 1.443 @8 1.255 @12 0.954 bp 10.98 (L 4.23 S 2.24 H 5.67 F 1.98) to 0.571 mdd2 -35.2 minYr 0.61 yearly {2020: 3.3, 2021: 0.61, 2022: 0.65, 2023: 1.11, 2024: 1.79, 2025: 1.55}
+B-MV+W12 SR 1.500 @8 1.342 @12 1.089 bp 11.41 (L 4.23 S 2.24 H 5.59 F 1.98) to 0.479 mdd2 -34.2 minYr 0.67 yearly {2020: 3.32, 2021: 0.67, 2022: 0.7, 2023: 1.18, 2024: 1.85, 2025: 1.63}
+B vs LIVE: t 2.77 years 6/6 groups 4/5 regimes 2.58/3.55 adopt True
+B-MV vs B: t 2.65 years 4/6 groups 4/5 regimes 2.71/4.47 adopt False
+B-MV+W12 vs B-MV: t 8.53 years 6/6 groups 5/5 regimes 0.40/0.48 adopt True
+B-MV vs LIVE: t 3.84 years 6/6 groups 4/5 regimes 5.10/7.70 adopt True
+B-MV+W12 vs LIVE: t 4.13 years 6/6 groups 4/5 regimes 5.54/8.23 adopt True

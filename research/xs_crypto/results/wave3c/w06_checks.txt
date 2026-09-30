@@ -1,0 +1,9 @@
+net bp/day  B-MV 20.823  W06 21.097  diff 0.274
+pre-cost    B-MV 23.401  W06 23.448  diff 0.047 (t 1.20)
+hedge P&L diff 0.047 bp/day; hedge turnover 0.155 -> 0.114
+NOT risk-matched: t 6.97 years 6/6 groups 0/5 (coin diffs [0.0, 0.0, 0.0, 0.0, 0.0]) adopt False
+hedge cost 2.0bp: SR B-MV 2.846 W06 2.865  diff 0.129 bp/day t 3.31
+hedge cost 3.5bp: SR B-MV 2.815 W06 2.842  diff 0.191 bp/day t 4.89
+B-MV daily beta to BTC 0.0452, corr 0.098
+W06 daily beta to BTC 0.0450, corr 0.097
+tracking: std of daily (W06 - B-MV) = 1.84 bp vs B-MV daily vol 143.4 bp

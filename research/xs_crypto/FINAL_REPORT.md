@@ -1,5 +1,29 @@
 # XS crypto low-idio-vol book: final research summary (2026-09-29/30)
 
+> ## ⚠ CORRECTION (2026-09-30, wave 3c, independently verified): every Sharpe in this research is inflated ~2x by log-return accounting
+> The harness books P&L as weight × **log** return. Real P&L is weight × **simple** return. For shorts, log accounting overstates profit by about |w|·r²/2 per hour, and this book shorts the most volatile coins, so the bias manufactures most of the "short-leg alpha".
+> I re-ran it myself (single clock, simple returns):
+> - LIVE: SR 2.22 → **0.78**
+> - B: SR 2.69 → **1.15**
+> - With simple returns the short leg earns about 0 bp/day (was +17.6). The profit comes from the long leg, the BTC hedge and funding.
+>
+> Realistic accounting (simple returns, positions drift between trades, 8-clock), from results/wave3c:
+>
+> | Book | SR at 5.5 / 8 / 12 bp | Worst-year SR |
+> |---|---|---|
+> | LIVE | 0.71 / 0.58 / 0.36 | −0.15 |
+> | B | 1.06 / 0.91 / 0.67 | – |
+> | **B-MV** | **1.44 / 1.25 / 0.95** | 0.61 |
+> | **B-MV + 0.03 hedge no-trade band** | **1.50 / 1.34 / 1.09** | – |
+>
+> - **Relative verdicts survive:** B-MV vs LIVE t 3.84, 6/6 years. The switch is still recommended, and B-MV is now a return improvement, not just a risk-shape one.
+> - **Absolute expectations must be cut sharply:**
+>   - LIVE's realistic *live* SR is likely about **0.3–0.7**, and B-MV's about **0.6–1.1**.
+>   - At 1.5x on $330 that is roughly **$4–12/month for B-MV**, with drawdowns of −35 to −50%.
+> - **Every backtest number below this box uses log accounting.** Read them as relative comparisons only.
+> - **The score parameters need re-checking** (funding weight, L=336, idio-vol construction). They were tuned under a bias that favours shorting volatile names.
+
+
 Research only, using 2020-03 to 2025-12 data. The 2026 holdout was never touched. About 520 backtests were run across the session, and each proposal was checked with pre-registration, risk-matched partition tests, placebo nulls and walk-forward. Detailed reports:
 - `report.md`: audit, round 1–2 and active variants
 - `results/drawdown/REPORT.md`
