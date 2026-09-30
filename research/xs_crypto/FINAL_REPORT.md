@@ -53,3 +53,46 @@ The table is averaged over all 8 possible rebalance clocks, since single-clock r
 
 ## Research status
 The accessible search space looks exhausted. Two full waves of new signal, hedge, active-management and construction ideas produced no mean improvement. The only adoptions were B's reallocation and a risk-shape change. More in-sample search would mostly generate false positives: the placebo max t was 1.79, and ~2.5% of random features pass the adoption rule. The best remaining uses of time are the 2026 holdout check and live paper-trading of B-MV alongside LIVE.
+
+---
+
+## Update (wave 3, 2026-09-30)
+
+### Would the selection process have worked in advance? (results/wave3a)
+- The whole selection was re-run using only data before 2023, 2024 and 2025, then tested on the next year. **The picked config was the same all three times:** 8 longs / 20 shorts, short stop 0.20, minvar_floor short weights, and a 50/50 short allocation. B's 55% short allocation would not have been picked before 2025.
+- **Out of sample**, the pick beat LIVE on risk-matched return in 3/3 years and on SR in 2/3 years:
+
+  | Year | SR uplift vs LIVE |
+  |---|---|
+  | 2023 | −0.06 |
+  | 2024 | +0.83 |
+  | 2025 | +0.22 |
+  | Pooled 2023–25 | +0.34 (t 2.59) |
+
+- About 45% of the in-sample uplift survived. **Realistic live uplift: about +0.15 to +0.35 SR over LIVE**, with roughly a 1-in-3 chance of no gain in a given year.
+
+### Realistic costs and fills (results/wave3a)
+- **Per-coin costs** (liquidity-scaled) barely matter: the edge survives at 2x the cost level.
+- **Stop slippage is the key risk.** The 20% short stop fires about 2.7x more exposure than LIVE's stop, and squeezes gap.
+
+  | Stop slippage | B-MV vs LIVE |
+  |---|---|
+  | 1% | t 2.17 |
+  | 2% | t 1.27 |
+  | Break-even | about 3.5% |
+
+  Plain B's edge dies at about 2.3% slippage, so **don't run plain B, only B-MV.** B-MV keeps its drawdown advantage in every setting.
+- **Funding** is about 9% of P&L. It is unclear whether daily funding is stamped same-day; the worst case costs every book about −0.06 SR and doesn't change the ranking.
+
+### Structural ideas (results/wave3b)
+- Separate long/short scores all failed.
+- An ensemble across idio windows failed.
+- An ensemble across long counts passed only by noise.
+- The minvar settings sit on a plateau: SR 2.65–2.82 for all neighbours.
+- **8 longs vs 12:** SR 2.95 vs 2.77, t 2.06, and walk-forward picks 8 every year. The pseudo-holdout pipeline also picked 8. Still, this is post hoc and borderline.
+
+### Revised recommendation
+1. Go live with **B-MV next to LIVE**, sized about **1.15x** to match LIVE's volatility (B-MV runs about 15–20% less volatile).
+   - Candidate for the 2026 holdout: B-MV with **8 longs and a 50/50 short allocation**. This is the clean pipeline's pick, and N=8 is also supported by wave 3b.
+2. **Log every short-stop fill vs the 20% trigger.** If slippage averages ≥ 2%, the case for switching largely disappears.
+3. Expected live SR: LIVE about 1.2 → B-MV about **1.35–1.55**, i.e. **about $13–19/month on $330** at matched risk. Drawdown planning is unchanged: about −30%.
