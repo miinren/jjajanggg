@@ -109,6 +109,8 @@ def run(tid):
         df, cm = avg8(per_offset=per, rew_band=band); extra = dict(rew_band=band)
     elif tid == "W11":
         df, cm = avg8(per_offset=per, hedge_band=0.03, rew_band=0.30, execf=EXEC["E02"][0], H=EXEC["E02"][1]); extra = None
+    elif tid == "W12":
+        df, cm = avg8(per_offset=per, hedge_band=0.03, hedge_force=False); extra = dict(hedge_to=round(float(cut(df.to_hedge).mean()), 4))
     elif tid == "W06":
         df, cm = avg8(per_offset=per, hedge_band=0.03); extra = dict(hedge_to=round(float(cut(df.to_hedge).mean()), 4))
     elif tid in ("W09", "W08"):
