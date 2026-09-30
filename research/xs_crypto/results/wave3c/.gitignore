@@ -1,3 +1,4 @@
 __pycache__/
 *.log
 results_raw.csv
+n_screen.csv
