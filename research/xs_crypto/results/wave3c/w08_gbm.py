@@ -34,12 +34,14 @@ X = np.column_stack([feats[k] for k in feats]); names = list(feats); del feats; 
 fwd = np.full(T, np.nan)[:, None] * np.ones((1, 1))
 Y = pd.DataFrame(np.where(np.arange(T)[:, None] + 73 < T, CS[np.minimum(np.arange(T) + 73, T - 1)] - CS[np.minimum(np.arange(T) + 1, T - 1)], np.nan)).where(M).rank(1, pct=True).to_numpy().ravel()[Mi].astype(np.float32)
 hr = D.idx.hour.to_numpy()[r_]; yr = D.idx.year.to_numpy()[r_]; tend = r_ + 73
-print("features", names, X.shape, flush=True)
+print("features", names, X.shape, "Y finite", int(np.isfinite(Y).sum()), flush=True)
+np.savez(f"{OUT}/W08_XY.npz", X=X, Y=Y, r_=r_, c_=c_)
 pred = np.full(len(Mi), np.nan, np.float32)
 for Yy in range(2021, 2026):
     y0 = np.searchsorted(D.idx, pd.Timestamp(f"{Yy}-01-01"))
     tr = (hr % 8 == 7) & (tend < y0) & np.isfinite(Y) & (D.idx[r_] >= pd.Timestamp("2020-03-15"))
-    m = HistGradientBoostingRegressor(max_iter=200, learning_rate=0.05, max_leaf_nodes=15, min_samples_leaf=200, l2_regularization=1.0, random_state=0)
+    m = HistGradientBoostingRegressor(max_iter=200, learning_rate=0.05, max_leaf_nodes=15, min_samples_leaf=200, l2_regularization=1.0, early_stopping=False, random_state=0)
+    print(Yy, 'n_train', int(tr.sum()), flush=True)
     m.fit(X[tr], Y[tr]); te = yr == Yy; pred[te] = m.predict(X[te]); print(Yy, "trained on", int(tr.sum()), flush=True)
 P = np.full((T, K), np.nan, np.float32); P.ravel()[Mi] = pred; np.save(f"{OUT}/W08_pred.npy", P)
 # pre-screen: IC of prediction vs realised 72h fwd inside candidate sets (offset-0 rows)
