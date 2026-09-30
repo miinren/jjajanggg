@@ -18,7 +18,7 @@ import cloud_harness as h
 
 def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0.40, long_stop=0.40, stops=True,
          hedge=1.0, leg_weights=None, elig=None, short_frac=0.5, cost=h.COST, offset=0,
-         execf=None, H=0, entry_ok_s=None, entry_ok_l=None, hedge_target=False, hedge_band=None, rew_band=None, drift=False, hedge_force=True):
+         execf=None, H=0, entry_ok_s=None, entry_ok_l=None, hedge_target=False, hedge_band=None, rew_band=None, drift=False, hedge_force=True, simple=False):
     NS = N if NS is None else NS
     idx = D.idx; T, K = len(idx), len(D.cols)
     SC = np.asarray(score, dtype=float)
@@ -78,7 +78,8 @@ def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0
                     if x == 0: lc[c] = 0.0
                     to[i] += abs(x - w[c]); w[c] = x
                 if f >= 1.0: pend[c] = False
-        cp = w * D.Rn[i]; coin[i] = cp
+        Ri = np.expm1(D.Rn[i]) if simple else D.Rn[i]     # simple=True: P&L on simple returns (log accounting overstates shorts by ~|w|*r^2/2)
+        cp = w * Ri; coin[i] = cp
         lp[i] = cp[w > 0].sum(); sp[i] = cp[w < 0].sum(); fund[i] = -(w @ D.Fh[i])
         if hedge:
             wh = np.where(pend, wt, w) if (hedge_target and execf is not None) else w
@@ -86,7 +87,7 @@ def book(D, score, N=20, NS=None, every=8, L=336, keepx=0.5, guard=-5e-4, stop=0
             if hedge_band is not None:      # W06: hold the hedge unless rebalance/stop or drift beyond the band
                 if not (((reb[i] or hforce) and hedge_force) or abs(hh - hp) > hedge_band): hh = hp
                 hforce = False
-            hpnl[i] = hh * D.rbn[i]; to[i] += abs(hh - hp); toh[i] = abs(hh - hp); hp = hh
+            hpnl[i] = hh * (np.expm1(D.rbn[i]) if simple else D.rbn[i]); to[i] += abs(hh - hp); toh[i] = abs(hh - hp); hp = hh
         if drift:      # realism: positions drift with price between trades (w = position / NAV); rebalances then pay to restore
             g = np.expm1(D.Rn[i]); gb = np.expm1(D.rbn[i]); pr = w @ g + (hp * gb if hedge else 0.0) + fund[i]
             w = w * (1 + g) / (1 + pr)
