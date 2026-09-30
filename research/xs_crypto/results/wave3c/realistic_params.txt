@@ -1,0 +1,14 @@
+BASE realistic B-MV+W06: SR 1.490 @8 1.327 @12 1.067 mdd2 -34.3 minYr 0.66 to 0.492
+{'id': 'R03', 'params': '{"NS": 15}', 'SR': np.float64(1.403), 'SR8': np.float64(1.241), 'SR12': np.float64(0.982), 't': np.float64(-0.622), 'years': '2/6', 'groups': '2/5', 'adopt': False, 'mdd2': np.float64(-42.054), 'minYr': np.float64(0.103), 'to': np.float64(0.515), 'clocks_won': np.int64(1)}
+{'id': 'R04', 'params': '{"NS": 25}', 'SR': np.float64(1.499), 'SR8': np.float64(1.335), 'SR12': np.float64(1.072), 't': np.float64(0.106), 'years': '5/6', 'groups': '4/5', 'adopt': False, 'mdd2': np.float64(-35.606), 'minYr': np.float64(0.657), 'to': np.float64(0.479), 'clocks_won': np.int64(5)}
+{'id': 'R05', 'params': '{"N": 8}', 'SR': np.float64(1.657), 'SR8': np.float64(1.486), 'SR12': np.float64(1.211), 't': np.float64(1.984), 'years': '4/6', 'groups': '4/5', 'adopt': False, 'mdd2': np.float64(-32.458), 'minYr': np.float64(0.668), 'to': np.float64(0.522), 'clocks_won': np.int64(8)}
+{'id': 'R06', 'params': '{"N": 16}', 'SR': np.float64(1.416), 'SR8': np.float64(1.254), 'SR12': np.float64(0.997), 't': np.float64(-1.125), 'years': '2/6', 'groups': '1/5', 'adopt': False, 'mdd2': np.float64(-34.039), 'minYr': np.float64(0.64), 'to': np.float64(0.489), 'clocks_won': np.int64(1)}
+{'id': 'R07', 'params': '{"stop": 0.3}', 'SR': np.float64(1.277), 'SR8': np.float64(1.13), 'SR12': np.float64(0.896), 't': np.float64(-2.721), 'years': '0/6', 'groups': '0/5', 'adopt': False, 'mdd2': np.float64(-38.271), 'minYr': np.float64(0.203), 'to': np.float64(0.458), 'clocks_won': np.int64(0)}
+{'id': 'R08', 'params': '{"stop": 0.15}', 'SR': np.float64(1.344), 'SR8': np.float64(1.167), 'SR12': np.float64(0.885), 't': np.float64(-1.932), 'years': '1/6', 'groups': '1/5', 'adopt': False, 'mdd2': np.float64(-40.511), 'minYr': np.float64(0.356), 'to': np.float64(0.531), 'clocks_won': np.int64(1)}
+WF NS: wf_SR 1.010 base 1.162 t -0.86 picks {2021: 'R03', 2022: 'R03', 2023: 'R03', 2024: 'base', 2025: 'R03'}
+WF N: wf_SR 1.247 base 1.162 t 1.13 picks {2021: 'R05', 2022: 'R06', 2023: 'R05', 2024: 'R05', 2025: 'R05'}
+WF stop: wf_SR 1.162 base 1.162 t nan picks {2021: 'base', 2022: 'base', 2023: 'base', 2024: 'base', 2025: 'base'}
+base check SR 1.490 (expect 1.490)
+{'id': 'R01', 'short_frac': 0.5, 'SR': np.float64(1.414), 'SR8': np.float64(1.248), 'SR12': np.float64(0.982), 't': np.float64(-1.05), 'years': '1/6', 'groups': '5/5', 'adopt': False, 'mdd2': np.float64(-37.0), 'minYr': np.float64(0.68), 'clocks_won': np.int64(0)}
+{'id': 'R02', 'short_frac': 0.45, 'SR': np.float64(1.267), 'SR8': np.float64(1.102), 'SR12': np.float64(0.838), 't': np.float64(-1.43), 'years': '1/6', 'groups': '5/5', 'adopt': False, 'mdd2': np.float64(-38.8), 'minYr': np.float64(0.48), 'clocks_won': np.int64(0)}
+WF short_frac: wf_SR 1.162 base 1.162 t nan picks {2021: 'base', 2022: 'base', 2023: 'base', 2024: 'base', 2025: 'base'}

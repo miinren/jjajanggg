@@ -32,7 +32,7 @@
 >
 > **So the recommendation (switch to B-MV, add the W06 hedge band) stands, but the realistic backtest SR is about 1.4–1.5, not 2.8.** At 12 bp it is about 1.0.
 >
-> **Follow-up needed.** Every parameter chosen in earlier waves under log accounting should be re-checked under `simple=True, drift=True`: short 55%, N=12/NS=20, the 20% stop, the funding weight, the score's L=336 and the idio-vol construction. The bias favours short-heavy, high-vol-short choices, so some may be mis-tuned. The log-vs-simple gap also means any feature that tilts shorts toward volatile names looked better than it is. All relative results in this report compare books under the *same* accounting, so the sign of most verdicts should hold, but magnitudes on the short leg are overstated.
+> **Follow-up (done for the book parameters in Wave R below; short 55%, NS=20 and the 20% stop confirmed, N=8 borderline).** The funding weight, the score's L=336 and the idio-vol construction are still un-re-checked under `simple=True, drift=True`. The bias favours short-heavy, high-vol-short choices, so some may be mis-tuned. The log-vs-simple gap also means any feature that tilts shorts toward volatile names looked better than it is. All relative results in this report compare books under the *same* accounting, so the sign of most verdicts should hold, but magnitudes on the short leg are overstated.
 
 Research only. Data runs 2020-03-15..2025-12-31 (the 2026 holdout was not touched). Every book is **8-clock averaged** and compared with **B-MV**
 (`ext3.book(D, S0, short_frac=0.55, stop=0.2, N=12, NS=20, leg_weights=minvar_floor)`). The new engine `ext4.py` reproduces B-MV
@@ -160,6 +160,24 @@ Each value is the effect of the rule's swap on forward 8h residual returns (bp),
 - **Conclusion.** Better forecasting inside the tails does not beat B-MV unless it changes *which* names are held in the right direction, and none of our data does that reliably.
 - **Next step, if pursued.** The model could be retrained on the swap objective itself: marginal-in minus marginal-out returns net of cost. That is a new pre-registered trial and a likely overfit risk.
 
+
+## Wave R: B-MV's parameters re-checked under realistic accounting (`realistic_params.py`, `realistic_sf.py`, `realistic_params.txt`)
+- **Setup.** Base = B-MV + W06 hedge band, with simple returns and drift, 8-clock: **SR 1.490 (8 bp 1.327, 12 bp 1.067), mdd@2% −34.3, worst year 0.66**. Neighbours are changed one at a time, with a risk-matched partition test vs this base.
+- **Bug found and fixed.** `minvar_floor` hard-codes the 45/55 leg split and ignores `short_frac`, so the first R01/R02 runs were identical to the base. They were re-run with the leg weights rescaled.
+
+| param | neighbour | SR (8 / 12 bp) | t vs base | years / groups / clocks | walk-forward | verdict |
+|---|---|---|---|---|---|---|
+| short_frac 0.55 | 0.50 | 1.414 (1.248 / 0.982) | −1.05 | 1/6, 5/5, 0/8 | picks 0.55 every year | **keep 0.55** |
+| | 0.45 | 1.267 (1.102 / 0.838) | −1.43 | 1/6, 5/5, 0/8 | | |
+| NS 20 | 15 | 1.403 (1.241 / 0.982) | −0.62 | 2/6, 2/5, 1/8 | 1.010 vs 1.162 | **keep 20** |
+| | 25 | 1.499 (1.335 / 1.072) | +0.11 | 5/6, 4/5, 5/8 | | (flat plateau) |
+| **N 12** | **8** | **1.657 (1.486 / 1.211)** | **+1.98** | 4/6, 4/5, **8/8** | 1.247 vs 1.162 (t 1.13) | keep 12 by the rule; **8 is the best holdout candidate** |
+| | 16 | 1.416 (1.254 / 0.997) | −1.13 | 2/6, 1/5, 1/8 | | |
+| stop 0.20 | 0.30 | 1.277 (1.130 / 0.896) | −2.72 | 0/6, 0/5, 0/8 | picks 0.20 every year | **keep 0.20** |
+| | 0.15 | 1.344 (1.167 / 0.885) | −1.93 | 1/6, 1/5, 1/8 | | |
+
+- **Reading.** The configuration chosen under log accounting survives correct accounting. The one exception is the long count: under correct accounting the long leg is a real earner (+4 bp/day), and concentrating it in the 8 calmest names helps on every clock, although it wins only 4 of 6 years.
+- **Suggestion.** Add N=8 alongside N=12 in the 2026 holdout check, using realistic accounting.
 
 ### Wave 4, round 2 (idea agent round 2; red-team fixes)
 - **W10 no-trade band on small re-weights of continuing names** (band 0.15 / 0.30 / 0.50): t −1.10 / −1.61 / −0.40, 0–2/8 clocks. **FAIL.**
