@@ -16,8 +16,10 @@ Adoption means the risk-matched `h.partition_test` returns adopt=True **and** t 
    - Two of six features passed a strict out-of-sample IC screen: volume-signed 72h residual flow (OOS IC −0.043) and idiosyncratic share (−0.027).
    - Inside the book **both hurt**: blend t −3.3 and −1.9, and the flow sleeve alone has SR −0.76.
    - Candidate-set tie-breaks and vetoes (W01–W04) all flip sign between 2020–22 and 2023–25.
-   - The one "holistic" model trained on all 17 features is reported in the W08 section.
-4. **Why things keep failing.** B-MV trades the extreme tails of S0. Features with real predictive power across the whole cross-section (flow, idio-share) are U-shaped or concentrated mid-distribution, so they do not help inside the tails. Anything that changes *which* names are held costs more than it adds, which matches waves 1–2.
+   - **Holistic model (W08, all 17 features in one walk-forward boosted model): real skill but it loses money.**
+     - In-candidate OOS IC is 0.065 (t 11.7) and passes the leak checks.
+     - The book still falls to SR 2.50 (t −1.68), because its skill mostly re-orders names the book holds anyway, and the marginal swaps give up tail premium and add turnover.
+4. **Why things keep failing.** W08 shows it most clearly. B-MV trades the extreme tails of S0. Features with real predictive power across the whole cross-section (flow, idio-share) are U-shaped or concentrated mid-distribution, so they do not help inside the tails. Anything that changes *which* names are held costs more than it adds, which matches waves 1–2.
 
 ## Topic 1: execution timing (E01–E16)
 - **Engine.** `ext4.book(..., execf, H)`. The target portfolio is unchanged. Each coin's weight moves to target at a later step j ∈ [i0, i0+H] according to a policy that sees only rows ≤ j, and weights set at j earn R1[j+2]. Turnover is charged when the weight actually moves, and stops act on filled weights.
@@ -107,7 +109,22 @@ Each value is the effect of the rule's swap on forward 8h residual returns (bp),
 - **Size of the gain.** It is modest: about +0.04 SR. Implement it only if the live bot currently re-hedges hourly; it is a two-line change.
 
 ### W08: holistic model (the user asked for "all data together")
-W08_PLACEHOLDER
+- **Model.** One gradient-boosted model (fixed hyper-parameters, no tuning) is trained on **17 features at once**: S0, idio, funding level and change, flow, volume spike, 24h volume, 24/72/168h residual returns, idio share, near-high, BTC beta, max |z|, variance ratio, settlement drift and universe size. It is retrained each year on data before that year only (2021–25) and predicts each coin's 72h forward residual rank.
+- **Use in the book.** The model only re-ranks names inside the book's candidate sets, so the held names still come from the S0 tails.
+- **Pre-screen** (`w08_gbm.py`). In-candidate OOS rank IC is **0.065, NW t 11.7**, positive in every year (2021 0.036, 2022 0.054, 2023 0.096, 2024 0.045, 2025 0.096). This is far stronger than any single feature.
+- **Leak checks** (`w08_checks.py`, `w08_checks.txt`):
+  - A shuffled-target placebo gives IC −0.003 (t −0.6).
+  - With all features lagged 8h the IC is 0.052 (t 9.0). That is a gentle decay, not a collapse.
+  - Permutation importance is spread out: S0 0.011, 168h β 0.009, flow 0.008, 24h reversal 0.006, idio 0.005, idio share 0.004, and so on.
+  - **No leak: the skill is real.**
+- **Book trial: SR 2.50, t −1.68, 2/6 years, 0/8 clocks; turnover rises 0.47 → 0.54; mdd@2% −30.2.** **FAIL.**
+- **Why it fails** (this is the central lesson of this wave):
+  - The IC is measured over *all* names in the candidate set. Most of that skill is **re-ordering names the book holds anyway**, which changes nothing because weights come from minvar, not rank.
+  - Holdings change only at the margin, where the model swaps extreme-S0 names for positions 21–28. That gives up part of the lottery premium, which S0 captures best at the very tail.
+  - It also re-ranks every rebalance and so pays turnover.
+  - Net P&L falls 2.7 bp/day, far more than the 0.4 bp/day of extra cost.
+- **Conclusion.** Better forecasting inside the tails does not beat B-MV unless it changes *which* names are held in the right direction, and none of our data does that reliably.
+- **Next step, if pursued.** The model could be retrained on the swap objective itself: marginal-in minus marginal-out returns net of cost. That is a new pre-registered trial and a likely overfit risk.
 
 ## Caveats (red-team audit summary)
 - **Lookahead.** None found: every feature and policy uses rows ≤ i, forward windows start at R1[i+2], and `np.roll` wrap-around is masked.
@@ -116,48 +133,50 @@ W08_PLACEHOLDER
 - **`results_raw.csv` is ragged.** Rows with extra fields were appended unlabelled; the V01 row is the re-run after the empty-leg fix. **`results.csv` (built from the logs by `build_table.py`) is the clean table.**
 
 ## Full results table (8-clock averaged; t = risk-matched NW t vs B-MV; adopt = partition adopt AND t ≥ 2)
-| id           |    SR |   SR8 |   SR12 |      t | years   | groups   | reg         | padopt   | adopt   |    mdd2 |   minYr |    to |   clocks_won |
-|:-------------|------:|------:|-------:|-------:|:--------|:---------|:------------|:---------|:--------|--------:|--------:|------:|-------------:|
-| E01          | 2.788 | 2.631 |  2.381 |  1.811 | 5/6     | 4/5      | 0.15/0.05   | True     | False   | -24.699 |   1.758 | 0.465 |            7 |
-| E02          | 2.802 | 2.646 |  2.397 |  2.033 | 5/6     | 3/5      | 0.30/0.11   | False    | False   | -24.356 |   1.769 | 0.462 |            8 |
-| E03          | 2.812 | 2.656 |  2.408 |  1.951 | 5/6     | 2/5      | 0.40/0.15   | False    | False   | -23.992 |   1.768 | 0.46  |            8 |
-| E04          | 2.793 | 2.635 |  2.381 |  0.738 | 5/6     | 4/5      | 0.40/-0.16  | False    | False   | -25.415 |   1.71  | 0.471 |            4 |
-| E05          | 2.703 | 2.518 |  2.224 | -1.929 | 0/6     | 1/5      | -0.79/-0.21 | False    | False   | -26.938 |   1.639 | 0.547 |            1 |
-| E06          | 2.714 | 2.53  |  2.235 | -1.573 | 2/6     | 2/5      | -0.75/-0.07 | False    | False   | -25.86  |   1.638 | 0.545 |            1 |
-| E07          | 2.743 | 2.559 |  2.265 | -0.738 | 2/6     | 3/5      | -0.07/-0.42 | False    | False   | -24.685 |   1.678 | 0.544 |            2 |
-| E08          | 2.714 | 2.527 |  2.226 | -2.945 | 1/6     | 4/5      | -0.49/-0.38 | False    | False   | -24.957 |   1.689 | 0.566 |            0 |
-| E09          | 2.777 | 2.618 |  2.365 |  0.308 | 1/6     | 3/5      | -0.07/0.15  | False    | False   | -25.01  |   1.742 | 0.473 |            5 |
-| E10          | 2.768 | 2.603 |  2.34  | -0.443 | 1/6     | 3/5      | 0.03/-0.12  | False    | False   | -24.984 |   1.724 | 0.49  |            2 |
-| E11          | 2.757 | 2.595 |  2.338 | -3.902 | 1/6     | 1/5      | -0.13/-0.12 | False    | False   | -25.175 |   1.718 | 0.48  |            1 |
-| E12          | 2.707 | 2.511 |  2.197 | -2.794 | 0/6     | 5/5      | -0.48/-0.53 | False    | False   | -24.881 |   1.669 | 0.591 |            1 |
-| E13          | 2.655 | 2.443 |  2.104 | -2.761 | 0/6     | 2/5      | -1.16/-0.56 | False    | False   | -26.866 |   1.585 | 0.635 |            1 |
-| E14          | 2.812 | 2.655 |  2.405 |  1.166 | 2/6     | 5/5      | 0.03/0.63   | False    | False   | -23.911 |   1.725 | 0.469 |            6 |
-| E15          | 2.799 | 2.642 |  2.392 |  0.893 | 1/6     | 4/5      | -0.14/0.62  | False    | False   | -23.967 |   1.747 | 0.469 |            7 |
-| E16          | 2.79  | 2.633 |  2.38  |  1.244 | 4/6     | 3/5      | 0.27/-0.05  | False    | False   | -24.333 |   1.721 | 0.468 |            5 |
-| F01_o3       | 2.737 | 2.586 |  2.344 | -0.36  | 1/6     | 3/5      | -0.56/0.08  | False    | False   | -25.461 |   1.609 | 0.462 |          nan |
-| F02_o1       | 2.806 | 2.652 |  2.407 |  0.31  | 3/6     | 3/5      | -0.29/0.92  | False    | False   | -23.496 |   1.821 | 0.47  |          nan |
-| V01          | 2.735 | 2.575 |  2.319 | -0.332 | 2/6     | 3/5      | 0.65/-1.48  | False    | False   | -25.16  |   1.58  | 0.459 |            3 |
-| V02          | 2.724 | 2.564 |  2.307 | -0.463 | 1/6     | 3/5      | 0.53/-1.50  | False    | False   | -24.244 |   1.513 | 0.46  |            2 |
-| V03          | 2.773 | 2.615 |  2.363 | -0.002 | 4/6     | 3/5      | 0.01/-0.02  | False    | False   | -24.571 |   1.649 | 0.468 |            4 |
-| V04          | 2.69  | 2.529 |  2.27  | -0.641 | 2/6     | 3/5      | 1.16/-2.88  | False    | False   | -23.815 |   1.33  | 0.454 |            3 |
-| V05          | 2.791 | 2.632 |  2.378 |  0.254 | 3/6     | 3/5      | 0.97/-0.91  | False    | False   | -22.618 |   1.554 | 0.463 |            5 |
-| V06          | 2.682 | 2.524 |  2.27  | -1.252 | 2/6     | 2/5      | -0.11/-1.41 | False    | False   | -23.562 |   1.736 | 0.463 |            2 |
-| V07          | 2.674 | 2.515 |  2.261 | -1.42  | 2/6     | 1/5      | -0.10/-1.56 | False    | False   | -23.115 |   1.646 | 0.464 |            0 |
-| V08          | 2.773 | 2.616 |  2.365 | -0.007 | 3/6     | 2/5      | -0.07/0.09  | False    | False   | -24.835 |   1.736 | 0.468 |            4 |
-| V09          | 2.665 | 2.508 |  2.256 | -0.988 | 2/6     | 1/5      | 0.71/-2.73  | False    | False   | -27.011 |   1.381 | 0.462 |            0 |
-| V10          | 2.736 | 2.578 |  2.325 | -0.762 | 3/6     | 3/5      | 0.31/-1.03  | False    | False   | -24.961 |   1.637 | 0.467 |            2 |
-| V11          | 2.755 | 2.597 |  2.344 | -0.459 | 3/6     | 2/5      | 0.29/-0.68  | False    | False   | -24.688 |   1.624 | 0.467 |            4 |
-| N02b         | 2.336 | 2.163 |  1.886 | -3.325 | 1/6     | 1/5      | -3.74/-2.77 | False    | False   | -34.422 |   0.986 | 0.517 |            0 |
-| N03b         | 2.556 | 2.396 |  2.141 | -1.878 | 2/6     | 2/5      | -2.17/-0.99 | False    | False   | -34.274 |   0.962 | 0.466 |            0 |
-| N02s         | 2.267 | 2.02  |  1.626 | -4.266 | 0/6     | 1/5      | -4.50/-2.98 | False    | False   | -34.21  |   0.858 | 0.615 |            0 |
-| N02s_rw0.15  | 2.52  | 2.31  |  1.976 | -3.837 | 0/6     | 1/5      | -2.26/-1.49 | False    | False   | -28.131 |   1.252 | 0.556 |            0 |
-| N02s_rw0.35  | 1.937 | 1.653 |  1.2   | -4.721 | 0/6     | 0/5      | -7.45/-4.92 | False    | False   | -44.371 |   0.44  | 0.673 |            0 |
-| W05          | 2.736 | 2.572 |  2.309 | -0.538 | 3/6     | 3/5      | -0.03/-0.60 | False    | False   | -26.013 |   1.416 | 0.508 |            0 |
-| W06          | 2.811 | 2.668 |  2.438 |  7.284 | 6/6     | 5/5      | 0.28/0.30   | True     | True    | -24.872 |   1.772 | 0.427 |            8 |
-| W06_band0.02 | 2.8   | 2.655 |  2.422 |  7.019 | 6/6     | 5/5      | 0.18/0.23   | True     | True    | -25.001 |   1.764 | 0.432 |            8 |
-| W06_band0.05 | 2.817 | 2.674 |  2.446 |  6.209 | 6/6     | 5/5      | 0.34/0.31   | True     | True    | -24.807 |   1.778 | 0.424 |            8 |
-| W07          | 2.787 | 2.629 |  2.377 |  1.064 | 3/6     | 4/5      | 0.17/0.02   | False    | False   | -25.009 |   1.719 | 0.469 |            5 |
-| W09          | 2.476 | 2.263 |  1.922 | -1.682 | 1/6     | 1/5      | -0.26/-4.74 | False    | False   | -27.415 |   1.072 | 0.578 |            0 |
+
+| id           |    SR |   SR8 |   SR12 |      t | years   | groups   | reg         | padopt   | adopt             |    mdd2 |   minYr |    to |   clocks_won |
+|:-------------|------:|------:|-------:|-------:|:--------|:---------|:------------|:---------|:------------------|--------:|--------:|------:|-------------:|
+| E01          | 2.788 | 2.631 |  2.381 |  1.811 | 5/6     | 4/5      | 0.15/0.05   | True     | False             | -24.699 |   1.758 | 0.465 |            7 |
+| E02          | 2.802 | 2.646 |  2.397 |  2.033 | 5/6     | 3/5      | 0.30/0.11   | False    | False             | -24.356 |   1.769 | 0.462 |            8 |
+| E03          | 2.812 | 2.656 |  2.408 |  1.951 | 5/6     | 2/5      | 0.40/0.15   | False    | False             | -23.992 |   1.768 | 0.46  |            8 |
+| E04          | 2.793 | 2.635 |  2.381 |  0.738 | 5/6     | 4/5      | 0.40/-0.16  | False    | False             | -25.415 |   1.71  | 0.471 |            4 |
+| E05          | 2.703 | 2.518 |  2.224 | -1.929 | 0/6     | 1/5      | -0.79/-0.21 | False    | False             | -26.938 |   1.639 | 0.547 |            1 |
+| E06          | 2.714 | 2.53  |  2.235 | -1.573 | 2/6     | 2/5      | -0.75/-0.07 | False    | False             | -25.86  |   1.638 | 0.545 |            1 |
+| E07          | 2.743 | 2.559 |  2.265 | -0.738 | 2/6     | 3/5      | -0.07/-0.42 | False    | False             | -24.685 |   1.678 | 0.544 |            2 |
+| E08          | 2.714 | 2.527 |  2.226 | -2.945 | 1/6     | 4/5      | -0.49/-0.38 | False    | False             | -24.957 |   1.689 | 0.566 |            0 |
+| E09          | 2.777 | 2.618 |  2.365 |  0.308 | 1/6     | 3/5      | -0.07/0.15  | False    | False             | -25.01  |   1.742 | 0.473 |            5 |
+| E10          | 2.768 | 2.603 |  2.34  | -0.443 | 1/6     | 3/5      | 0.03/-0.12  | False    | False             | -24.984 |   1.724 | 0.49  |            2 |
+| E11          | 2.757 | 2.595 |  2.338 | -3.902 | 1/6     | 1/5      | -0.13/-0.12 | False    | False             | -25.175 |   1.718 | 0.48  |            1 |
+| E12          | 2.707 | 2.511 |  2.197 | -2.794 | 0/6     | 5/5      | -0.48/-0.53 | False    | False             | -24.881 |   1.669 | 0.591 |            1 |
+| E13          | 2.655 | 2.443 |  2.104 | -2.761 | 0/6     | 2/5      | -1.16/-0.56 | False    | False             | -26.866 |   1.585 | 0.635 |            1 |
+| E14          | 2.812 | 2.655 |  2.405 |  1.166 | 2/6     | 5/5      | 0.03/0.63   | False    | False             | -23.911 |   1.725 | 0.469 |            6 |
+| E15          | 2.799 | 2.642 |  2.392 |  0.893 | 1/6     | 4/5      | -0.14/0.62  | False    | False             | -23.967 |   1.747 | 0.469 |            7 |
+| E16          | 2.79  | 2.633 |  2.38  |  1.244 | 4/6     | 3/5      | 0.27/-0.05  | False    | False             | -24.333 |   1.721 | 0.468 |            5 |
+| F01_o3       | 2.737 | 2.586 |  2.344 | -0.36  | 1/6     | 3/5      | -0.56/0.08  | False    | False             | -25.461 |   1.609 | 0.462 |          nan |
+| F02_o1       | 2.806 | 2.652 |  2.407 |  0.31  | 3/6     | 3/5      | -0.29/0.92  | False    | False             | -23.496 |   1.821 | 0.47  |          nan |
+| V01          | 2.735 | 2.575 |  2.319 | -0.332 | 2/6     | 3/5      | 0.65/-1.48  | False    | False             | -25.16  |   1.58  | 0.459 |            3 |
+| V02          | 2.724 | 2.564 |  2.307 | -0.463 | 1/6     | 3/5      | 0.53/-1.50  | False    | False             | -24.244 |   1.513 | 0.46  |            2 |
+| V03          | 2.773 | 2.615 |  2.363 | -0.002 | 4/6     | 3/5      | 0.01/-0.02  | False    | False             | -24.571 |   1.649 | 0.468 |            4 |
+| V04          | 2.69  | 2.529 |  2.27  | -0.641 | 2/6     | 3/5      | 1.16/-2.88  | False    | False             | -23.815 |   1.33  | 0.454 |            3 |
+| V05          | 2.791 | 2.632 |  2.378 |  0.254 | 3/6     | 3/5      | 0.97/-0.91  | False    | False             | -22.618 |   1.554 | 0.463 |            5 |
+| V06          | 2.682 | 2.524 |  2.27  | -1.252 | 2/6     | 2/5      | -0.11/-1.41 | False    | False             | -23.562 |   1.736 | 0.463 |            2 |
+| V07          | 2.674 | 2.515 |  2.261 | -1.42  | 2/6     | 1/5      | -0.10/-1.56 | False    | False             | -23.115 |   1.646 | 0.464 |            0 |
+| V08          | 2.773 | 2.616 |  2.365 | -0.007 | 3/6     | 2/5      | -0.07/0.09  | False    | False             | -24.835 |   1.736 | 0.468 |            4 |
+| V09          | 2.665 | 2.508 |  2.256 | -0.988 | 2/6     | 1/5      | 0.71/-2.73  | False    | False             | -27.011 |   1.381 | 0.462 |            0 |
+| V10          | 2.736 | 2.578 |  2.325 | -0.762 | 3/6     | 3/5      | 0.31/-1.03  | False    | False             | -24.961 |   1.637 | 0.467 |            2 |
+| V11          | 2.755 | 2.597 |  2.344 | -0.459 | 3/6     | 2/5      | 0.29/-0.68  | False    | False             | -24.688 |   1.624 | 0.467 |            4 |
+| N02b         | 2.336 | 2.163 |  1.886 | -3.325 | 1/6     | 1/5      | -3.74/-2.77 | False    | False             | -34.422 |   0.986 | 0.517 |            0 |
+| N03b         | 2.556 | 2.396 |  2.141 | -1.878 | 2/6     | 2/5      | -2.17/-0.99 | False    | False             | -34.274 |   0.962 | 0.466 |            0 |
+| N02s         | 2.267 | 2.02  |  1.626 | -4.266 | 0/6     | 1/5      | -4.50/-2.98 | False    | False             | -34.21  |   0.858 | 0.615 |            0 |
+| N02s_rw0.15  | 2.52  | 2.31  |  1.976 | -3.837 | 0/6     | 1/5      | -2.26/-1.49 | False    | False             | -28.131 |   1.252 | 0.556 |            0 |
+| N02s_rw0.35  | 1.937 | 1.653 |  1.2   | -4.721 | 0/6     | 0/5      | -7.45/-4.92 | False    | False             | -44.371 |   0.44  | 0.673 |            0 |
+| W05          | 2.736 | 2.572 |  2.309 | -0.538 | 3/6     | 3/5      | -0.03/-0.60 | False    | False             | -26.013 |   1.416 | 0.508 |            0 |
+| W06          | 2.811 | 2.668 |  2.438 |  7.284 | 6/6     | 5/5      | 0.28/0.30   | True     | ADOPT (cost-only) | -24.872 |   1.772 | 0.427 |            8 |
+| W06_band0.02 | 2.8   | 2.655 |  2.422 |  7.019 | 6/6     | 5/5      | 0.18/0.23   | True     | ADOPT (cost-only) | -25.001 |   1.764 | 0.432 |            8 |
+| W06_band0.05 | 2.817 | 2.674 |  2.446 |  6.209 | 6/6     | 5/5      | 0.34/0.31   | True     | ADOPT (cost-only) | -24.807 |   1.778 | 0.424 |            8 |
+| W07          | 2.787 | 2.629 |  2.377 |  1.064 | 3/6     | 4/5      | 0.17/0.02   | False    | False             | -25.009 |   1.719 | 0.469 |            5 |
+| W08          | 2.502 | 2.314 |  2.013 | -1.677 | 2/6     | 2/5      | -1.09/-3.26 | False    | False             | -30.181 |   0.992 | 0.542 |            0 |
+| W09          | 2.476 | 2.263 |  1.922 | -1.682 | 1/6     | 1/5      | -0.26/-4.74 | False    | False             | -27.415 |   1.072 | 0.578 |            0 |
 
 Rationales and pre-registration are in `trials.csv`. Walk-forward results are in `walkforward.csv`.
 

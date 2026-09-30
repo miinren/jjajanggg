@@ -1,0 +1,4 @@
+baseline IC 0.0608 t 11.0 {2021: 0.039, 2022: 0.04, 2023: 0.088, 2024: 0.048, 2025: 0.089}
+permutation importance (IC drop): {'S0': np.float64(0.0108), 'p_beta168': np.float64(0.0094), 'p_flow72': np.float64(0.008), 'p_ret24': np.float64(0.0061), 'p_idio336': np.float64(0.0048), 'p_idioshare': np.float64(0.004), 'p_ret168': np.float64(0.0034), 'p_nearhigh': np.float64(0.0027), 'p_fundchg3d': np.float64(0.0021), 'p_zmax8': np.float64(0.0016), 'p_vspike8': np.float64(0.0013), 'p_ret72': np.float64(0.0006), 'p_qv24': np.float64(0.0002), 'p_fund': np.float64(0.0001), 'univ_n': np.float64(0.0), 'p_settledrift': np.float64(-0.0018), 'p_varratio': np.float64(-0.0022)}
+placebo (shuffled-target) IC -0.0026 t -0.6 {2021: -0.003, 2022: 0.007, 2023: -0.02, 2024: 0.012, 2025: -0.009}
+features lagged 8h IC 0.0516 t 9.0 {2021: 0.033, 2022: 0.029, 2023: 0.075, 2024: 0.04, 2025: 0.081}
