@@ -7,7 +7,7 @@ e = D.resid; el = e.shift(1)
 PHI = ((e * el).rolling(336, min_periods=200).mean() / (el * el).rolling(336, min_periods=200).mean()).clip(-0.5, 0.5)
 EC = e - PHI * el
 def score(fw=0.25, L=336, ar1=True):
-    X = (EC if ar1 else e).rolling(L, min_periods=int(0.6 * L)).std()
+    X = (EC if ar1 else e).rolling(L, min_periods=round(200 * L / 336)).std()   # same min_periods ratio as common.py (200 at L=336)
     p = X.where(D.M).rank(1, pct=True); return (1 - fw) * p + fw * pF
 chk = score(); print("S0 rebuild max diff %.2e" % float((chk - S0).abs().max().max()), flush=True)
 RB = dict(N=12, NS=20, short_frac=0.55, stop=0.2, leg_weights=minvar_floor, hedge_band=0.03, simple=True, drift=True)
