@@ -1,0 +1,48 @@
+stage-1 gated picks: {2023: 'T06 B-MV', 2024: 'T07 B-MV-N8', 2025: 'T07 B-MV-N8'}
+ran T11
+ran T12
+ran T13
+ran T14
+ran T15
+ran T16
+ran T17
+ran T18
+| id              |    SR |   SR8 |   SR12 |     bp |     L |      S |     H |     F |     Fl |   cost |    to |     vol |    mdd2 |   minYr | yearly                          |
+|-----------------|-------|-------|--------|--------|-------|--------|-------|-------|--------|--------|-------|---------|---------|---------|---------------------------------|
+| T07 fw0.25-L336 | 1.569 | 1.397 |  1.123 | 12.002 | 5.033 |  2.766 | 5.663 | 1.411 | -0.947 | -2.872 | 0.522 | 146.155 | -33.579 |   0.558 | 3.35/0.56/1.13/1.35/1.94/1.54   |
+| T11 fw0-L168    | 0.548 | 0.378 |  0.107 |  4.339 | 4.838 | -3.617 | 5.301 | 0.77  | -1.316 | -2.953 | 0.537 | 151.383 | -69.804 |  -0.782 | 2.15/-0.78/-0.15/1.44/0.70/0.63 |
+| T12 fw0-L336    | 0.85  | 0.694 |  0.445 |  6.611 | 5.063 | -1.928 | 5.443 | 0.688 | -1.35  | -2.656 | 0.483 | 148.626 | -59.663 |  -0.825 | 2.42/-0.83/0.48/1.39/1.15/1.21  |
+| T13 fw0-L720    | 1.231 | 1.091 |  0.867 |  9.539 | 6.051 |  0.057 | 5.021 | 0.789 | -1.322 | -2.379 | 0.433 | 147.993 | -47.227 |  -0.111 | 2.32/-0.11/0.40/1.30/2.06/1.85  |
+| T14 fw0.25-L168 | 0.812 | 0.622 |  0.318 |  6.227 | 4.997 | -2.476 | 5.53  | 1.379 | -0.97  | -3.203 | 0.582 | 146.479 | -50.752 |  -0.372 | 2.34/-0.37/-0.14/1.36/1.26/0.99 |
+| T15 fw0.25-L720 | 1.523 | 1.369 |  1.121 | 11.702 | 6.524 |  1.426 | 5.023 | 1.332 | -0.995 | -2.603 | 0.473 | 146.757 | -32.17  |   0.47  | 2.65/0.47/0.87/1.12/2.04/2.23   |
+| T16 fw0.5-L168  | 0.969 | 0.713 |  0.303 |  6.85  | 5.372 | -2.206 | 4.808 | 2.859 |  0.04  | -3.983 | 0.724 | 134.997 | -37.938 |   0.611 | 1.45/0.70/0.61/0.63/1.41/1.05   |
+| T17 fw0.5-L336  | 1.658 | 1.408 |  1.008 | 11.498 | 5.377 |  1.533 | 5.395 | 2.995 |  0.236 | -3.802 | 0.691 | 132.485 | -34.342 |   0.326 | 4.49/1.37/0.33/0.57/1.97/1.42   |
+| T18 fw0.5-L720  | 1.921 | 1.684 |  1.305 | 13.49  | 6.396 |  2.274 | 5.26  | 3.205 |  0.482 | -3.645 | 0.663 | 134.138 | -30.891 |   0.798 | 4.07/0.93/0.83/0.80/2.43/2.69   |
+  full-sample T11 fw0-L168 vs default: t -4.15 yrs 1/6 grp 0/5 rm-diff -7.81
+  full-sample T12 fw0-L336 vs default: t -4.13 yrs 1/6 grp 0/5 rm-diff -5.50
+  full-sample T13 fw0-L720 vs default: t -1.49 yrs 2/6 grp 2/5 rm-diff -2.58
+  full-sample T14 fw0.25-L168 vs default: t -3.64 yrs 1/6 grp 1/5 rm-diff -5.79
+  full-sample T15 fw0.25-L720 vs default: t -0.23 yrs 2/6 grp 2/5 rm-diff -0.35
+  full-sample T16 fw0.5-L168 vs default: t -2.34 yrs 1/6 grp 1/5 rm-diff -4.59
+  full-sample T17 fw0.5-L336 vs default: t 0.33 yrs 3/6 grp 2/5 rm-diff 0.68
+  full-sample T18 fw0.5-L720 vs default: t 1.22 yrs 4/6 grp 3/5 rm-diff 2.70
+gated <2023: score pick T07 fw0.25-L336; fw0.25-L336 1.54, fw0-L168 0.26, fw0-L336 0.50, fw0-L720 0.75, fw0.25-L168 0.48, fw0.25-L720 1.22, fw0.5-L168 0.90, fw0.5-L336 1.93, fw0.5-L720 1.76
+gated <2024: score pick T07 fw0.25-L336; fw0.25-L336 1.48, fw0-L168 0.48, fw0-L336 0.66, fw0-L720 0.84, fw0.25-L168 0.64, fw0.25-L720 1.19, fw0.5-L168 0.84, fw0.5-L336 1.65, fw0.5-L720 1.55
+gated <2025: score pick T07 fw0.25-L336; fw0.25-L336 1.58, fw0-L168 0.53, fw0-L336 0.77, fw0-L720 1.09, fw0.25-L168 0.77, fw0.25-L720 1.36, fw0.5-L168 0.95, fw0.5-L336 1.72, fw0.5-L720 1.74
+  final pipeline picks: {2023: 'T06 B-MV', 2024: 'T07 fw0.25-L336', 2025: 'T07 fw0.25-L336'}
+  OOS gated @5.5bp vs T06 B-MV: {'SR': np.float64(1.536), 'ref_SR': np.float64(1.462), 'bp': np.float64(10.924), 'ref_bp': np.float64(10.247), 'd_rm_bp': np.float64(0.662), 't_rm': np.float64(1.139), 'yearly': {2023: (np.float64(1.05), np.float64(1.05)), 2024: (np.float64(1.94), np.float64(1.72)), 2025: (np.float64(1.54), np.float64(1.55))}}
+  OOS gated @5.5bp vs LIVE: {'SR': np.float64(1.536), 'ref_SR': np.float64(0.776), 'bp': np.float64(10.924), 'ref_bp': np.float64(5.564), 'd_rm_bp': np.float64(6.95), 't_rm': np.float64(3.08), 'yearly': {2023: (np.float64(1.05), np.float64(1.08)), 2024: (np.float64(1.94), np.float64(0.97)), 2025: (np.float64(1.54), np.float64(0.48))}}
+  OOS gated @8bp vs T06 B-MV: {'SR': np.float64(1.341), 'ref_SR': np.float64(1.279), 'bp': np.float64(9.544), 'ref_bp': np.float64(8.97), 'd_rm_bp': np.float64(0.561), 't_rm': np.float64(0.966), 'yearly': {2023: (np.float64(0.85), np.float64(0.85)), 2024: (np.float64(1.76), np.float64(1.56)), 2025: (np.float64(1.33), np.float64(1.36))}}
+  OOS gated @8bp vs LIVE: {'SR': np.float64(1.341), 'ref_SR': np.float64(0.646), 'bp': np.float64(9.544), 'ref_bp': np.float64(4.633), 'd_rm_bp': np.float64(6.3), 't_rm': np.float64(2.793), 'yearly': {2023: (np.float64(0.85), np.float64(0.93)), 2024: (np.float64(1.76), np.float64(0.85)), 2025: (np.float64(1.33), np.float64(0.34))}}
+  OOS gated @12bp vs T06 B-MV: {'SR': np.float64(1.03), 'ref_SR': np.float64(0.987), 'bp': np.float64(7.337), 'ref_bp': np.float64(6.929), 'd_rm_bp': np.float64(0.399), 't_rm': np.float64(0.689), 'yearly': {2023: (np.float64(0.52), np.float64(0.52)), 2024: (np.float64(1.48), np.float64(1.3)), 2025: (np.float64(0.99), np.float64(1.05))}}
+  OOS gated @12bp vs LIVE: {'SR': np.float64(1.03), 'ref_SR': np.float64(0.438), 'bp': np.float64(7.337), 'ref_bp': np.float64(3.145), 'd_rm_bp': np.float64(5.26), 't_rm': np.float64(2.332), 'yearly': {2023: (np.float64(0.52), np.float64(0.7)), 2024: (np.float64(1.48), np.float64(0.67)), 2025: (np.float64(0.99), np.float64(0.12))}}
+ungated <2023: score pick T17 fw0.5-L336; fw0.25-L336 1.54, fw0-L168 0.26, fw0-L336 0.50, fw0-L720 0.75, fw0.25-L168 0.48, fw0.25-L720 1.22, fw0.5-L168 0.90, fw0.5-L336 1.93, fw0.5-L720 1.76
+ungated <2024: score pick T17 fw0.5-L336; fw0.25-L336 1.48, fw0-L168 0.48, fw0-L336 0.66, fw0-L720 0.84, fw0.25-L168 0.64, fw0.25-L720 1.19, fw0.5-L168 0.84, fw0.5-L336 1.65, fw0.5-L720 1.55
+ungated <2025: score pick T18 fw0.5-L720; fw0.25-L336 1.58, fw0-L168 0.53, fw0-L336 0.77, fw0-L720 1.09, fw0.25-L168 0.77, fw0.25-L720 1.36, fw0.5-L168 0.95, fw0.5-L336 1.72, fw0.5-L720 1.74
+  final pipeline picks: {2023: 'T17 fw0.5-L336', 2024: 'T17 fw0.5-L336', 2025: 'T18 fw0.5-L720'}
+  OOS ungated @5.5bp vs T06 B-MV: {'SR': np.float64(1.875), 'ref_SR': np.float64(1.462), 'bp': np.float64(12.474), 'ref_bp': np.float64(10.247), 'd_rm_bp': np.float64(3.536), 't_rm': np.float64(1.774), 'yearly': {2023: (np.float64(0.57), np.float64(1.05)), 2024: (np.float64(1.97), np.float64(1.72)), 2025: (np.float64(2.69), np.float64(1.55))}}
+  OOS ungated @5.5bp vs LIVE: {'SR': np.float64(1.875), 'ref_SR': np.float64(0.776), 'bp': np.float64(12.474), 'ref_bp': np.float64(5.564), 'd_rm_bp': np.float64(10.135), 't_rm': np.float64(3.506), 'yearly': {2023: (np.float64(0.57), np.float64(1.08)), 2024: (np.float64(1.97), np.float64(0.97)), 2025: (np.float64(2.69), np.float64(0.48))}}
+  OOS ungated @8bp vs T06 B-MV: {'SR': np.float64(1.585), 'ref_SR': np.float64(1.279), 'bp': np.float64(10.549), 'ref_bp': np.float64(8.97), 'd_rm_bp': np.float64(2.672), 't_rm': np.float64(1.339), 'yearly': {2023: (np.float64(0.25), np.float64(0.85)), 2024: (np.float64(1.69), np.float64(1.56)), 2025: (np.float64(2.4), np.float64(1.36))}}
+  OOS ungated @8bp vs LIVE: {'SR': np.float64(1.585), 'ref_SR': np.float64(0.646), 'bp': np.float64(10.549), 'ref_bp': np.float64(4.633), 'd_rm_bp': np.float64(8.606), 't_rm': np.float64(2.978), 'yearly': {2023: (np.float64(0.25), np.float64(0.93)), 2024: (np.float64(1.69), np.float64(0.85)), 2025: (np.float64(2.4), np.float64(0.34))}}
+  OOS ungated @12bp vs T06 B-MV: {'SR': np.float64(1.121), 'ref_SR': np.float64(0.987), 'bp': np.float64(7.468), 'ref_bp': np.float64(6.929), 'd_rm_bp': np.float64(1.291), 't_rm': np.float64(0.645), 'yearly': {2023: (np.float64(-0.26), np.float64(0.52)), 2024: (np.float64(1.25), np.float64(1.3)), 2025: (np.float64(1.92), np.float64(1.05))}}
+  OOS ungated @12bp vs LIVE: {'SR': np.float64(1.121), 'ref_SR': np.float64(0.438), 'bp': np.float64(7.468), 'ref_bp': np.float64(3.145), 'd_rm_bp': np.float64(6.161), 't_rm': np.float64(2.132), 'yearly': {2023: (np.float64(-0.26), np.float64(0.7)), 2024: (np.float64(1.25), np.float64(0.67)), 2025: (np.float64(1.92), np.float64(0.12))}}

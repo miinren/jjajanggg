@@ -1,0 +1,20 @@
+id,stage,name,spec,status,"result (SR 5.5/8/12 bp; t = full-sample risk-matched vs B-MV, or vs T07 for stage 2)"
+T01,1-structure,LO8,"long-only: 8 lowest-S0 longs EW (gross 1.0), BTC-beta hedge (168h beta, W06 band 0.03), long stop 0.40, no alt shorts",done,SR -0.13/-0.20/-0.30; long +11.0 hedge -12.0 bp/d; t -2.48 vs B-MV
+T02,1-structure,LO12,as T01 with N=12,done,SR -0.28/-0.33/-0.42; t -2.78
+T03,1-structure,LO20,as T01 with N=20,done,SR -0.46/-0.51/-0.59; t -3.01
+T04,1-structure,LS-sf0.20,B-MV with short_frac 0.20 (minvar_floor legs rescaled; N=12 NS=20 short stop 0.20),done,SR 0.20/0.10/-0.05; t -2.37
+T05,1-structure,LS-sf0.35,B-MV with short_frac 0.35,done,SR 0.88/0.73/0.51; t -1.57
+T06,1-structure,B-MV,incumbent reference: N=12 NS=20 short_frac 0.55 short stop 0.20 minvar_floor + W06 band,done,SR 1.41/1.24/0.98 (incumbent)
+T07,1-structure,B-MV-N8,B-MV with N=8 longs (the 2026 holdout candidate flagged in wave 3a/R),done,"SR 1.57/1.40/1.12; t +1.95 4/6 yrs; gated pick <2024,<2025; ungated pick all 3"
+T08,1-structure,CARRY-55,"longs = 12 lowest S0 EW (0.45); shorts = 20 highest prior-day funding in M EW (0.55), no funding guard, short stop 0.20, hedged",done,SR 1.12/0.91/0.59; short raw +0.0 bp/d; t -1.19
+T09,1-structure,CARRY-35,as T08 with short_frac 0.35,done,SR 0.66/0.48/0.21; t -1.87
+T10,1-structure,CARRY7-55,as T08 with shorts ranked by trailing 7-day mean funding,done,SR 1.07/0.93/0.70; t -1.34
+T11,2-score,fw0-L168,"stage-1 structure, score fw=0 L=168",done,SR 0.55; t -4.15 vs T07
+T12,2-score,fw0-L336,fw=0 L=336,done,SR 0.85; t -4.13
+T13,2-score,fw0-L720,fw=0 L=720,done,SR 1.23; t -1.49
+T14,2-score,fw0.25-L168,fw=0.25 L=168,done,SR 0.81; t -3.64
+T15,2-score,fw0.25-L720,fw=0.25 L=720,done,SR 1.52; t -0.23
+T16,2-score,fw0.5-L168,fw=0.5 L=168,done,SR 0.97; t -2.34
+T17,2-score,fw0.5-L336,fw=0.5 L=336,done,"SR 1.66/1.41/1.01; t +0.33; ungated pick <2023,<2024; never passes gate"
+T18,2-score,fw0.5-L720,fw=0.5 L=720,done,SR 1.92/1.68/1.31; t +1.22 4/6 yrs; ungated pick <2025; never passes gate
+T19-T22,3-onestep,reserved,"one-step neighbours of the final pick only (max 4), no selection from them",done,ran T19 N=6: SR 1.55 t -0.18; T20 N=10: SR 1.48 t -1.12 (T21/T22 unused)

@@ -1,0 +1,81 @@
+ran LIVE
+ran T01 LO8
+ran T02 LO12
+ran T03 LO20
+ran T04 LS-sf0.20
+ran T05 LS-sf0.35
+ran T06 B-MV
+ran T07 B-MV-N8
+ran T08 CARRY-55
+ran T09 CARRY-35
+ran T10 CARRY7-55
+| id            |     SR |    SR8 |   SR12 |     bp |      L |      S |       H |     F |     Fl |   cost |    to |     vol |     mdd2 |   minYr | yearly                             |
+|---------------|--------|--------|--------|--------|--------|--------|---------|-------|--------|--------|-------|---------|----------|---------|------------------------------------|
+| LIVE          |  0.721 |  0.611 |  0.435 |  6.102 |  3.735 | -0.812 |   3.916 | 1.308 | -1.241 | -2.045 | 0.372 | 161.665 |  -48.744 |  -0.144 | 2.56/-0.14/0.09/1.08/0.97/0.48     |
+| T01 LO8       | -0.131 | -0.197 | -0.303 | -1.721 | 10.997 |  0     | -11.989 | 1.192 | -2.103 | -1.921 | 0.349 | 251.481 | -103.578 |  -2.258 | -2.26/1.58/0.39/-1.10/-0.19/-1.02  |
+| T02 LO12      | -0.275 | -0.33  | -0.417 | -3.669 |  9.247 |  0     | -12.335 | 1.031 | -2.327 | -1.611 | 0.293 | 254.891 | -132.186 |  -2.256 | -2.26/1.66/-0.11/-1.36/-0.54/-1.00 |
+| T03 LO20      | -0.457 | -0.51  | -0.593 | -6.219 |  7.312 |  0     | -12.928 | 0.976 | -2.482 | -1.579 | 0.287 | 259.984 | -167.613 |  -2.256 | -2.26/1.51/-0.09/-1.41/-0.99/-1.36 |
+| T04 LS-sf0.20 |  0.196 |  0.103 | -0.045 |  1.689 |  7.434 |  0.803 |  -5.936 | 1.141 | -1.861 | -1.754 | 0.319 | 164.638 |  -79.543 |  -1.028 | -0.86/1.72/0.12/-1.03/0.06/-0.30   |
+| T05 LS-sf0.35 |  0.877 |  0.734 |  0.505 |  5.649 |  6.067 |  1.417 |  -1.034 | 1.224 | -1.512 | -2.025 | 0.368 | 123.031 |  -46.752 |  -0.295 | 1.21/1.61/0.47/-0.30/0.96/0.76     |
+| T06 B-MV      |  1.405 |  1.242 |  0.982 | 10.688 |  4.228 |  2.241 |   5.59  | 1.336 | -1.047 | -2.707 | 0.492 | 145.358 |  -35.381 |   0.548 | 3.24/0.55/0.65/1.05/1.72/1.55      |
+| T07 B-MV-N8   |  1.569 |  1.397 |  1.123 | 12.002 |  5.033 |  2.766 |   5.663 | 1.411 | -0.947 | -2.872 | 0.522 | 146.155 |  -33.579 |   0.558 | 3.35/0.56/1.13/1.35/1.94/1.54      |
+| T08 CARRY-55  |  1.116 |  0.912 |  0.588 |  8.256 |  4.221 |  0.008 |   5.426 | 1.895 | -1.047 | -3.293 | 0.599 | 141.396 |  -70.018 |  -0.583 | 3.48/0.47/-0.58/1.48/1.71/1.08     |
+| T09 CARRY-35  |  0.658 |  0.484 |  0.207 |  4.126 |  6.06  | -0.008 |  -1.113 | 1.58  | -1.512 | -2.393 | 0.435 | 119.843 |  -57.767 |  -0.564 | 1.02/1.56/-0.56/0.03/0.89/0.34     |
+| T10 CARRY7-55 |  1.068 |  0.926 |  0.699 |  7.992 |  4.24  | -0.6   |   5.306 | 1.371 | -1.047 | -2.325 | 0.423 | 143.004 |  -64.995 |  -0.535 | 2.65/0.67/-0.53/0.77/2.14/1.23     |
+
+full-sample risk-matched ptest vs B-MV:
+  LIVE: t -3.58 years 0/6 groups 1/5 regimes -4.05/-6.74 rm-diff -5.20 bp
+  T01 LO8: t -2.48 years 1/6 groups 2/5 regimes -12.67/-10.65 rm-diff -11.68 bp
+  T02 LO12: t -2.78 years 1/6 groups 2/5 regimes -15.29/-9.84 rm-diff -12.78 bp
+  T03 LO20: t -3.01 years 1/6 groups 2/5 regimes -16.53/-11.45 rm-diff -14.17 bp
+  T04 LS-sf0.20: t -2.37 years 1/6 groups 3/5 regimes -10.54/-7.67 rm-diff -9.20 bp
+  T05 LS-sf0.35: t -1.57 years 1/6 groups 4/5 regimes -4.04/-4.05 rm-diff -4.01 bp
+  T07 B-MV-N8: t 1.95 years 4/6 groups 4/5 regimes 2.29/-0.04 rm-diff 1.25 bp
+  T08 CARRY-55: t -1.19 years 1/6 groups 2/5 regimes 0.25/-5.32 rm-diff -2.20 bp
+  T09 CARRY-35: t -1.87 years 1/6 groups 3/5 regimes -3.88/-8.04 rm-diff -5.68 bp
+  T10 CARRY7-55: t -1.34 years 2/6 groups 1/5 regimes 0.19/-6.06 rm-diff -2.56 bp
+gated <2023: pick T06 B-MV; selection SRs T01 0.35, T02 0.25, T03 0.19, T04 0.65, T05 1.17, T06 1.36, T07 1.54, T08 0.89, T09 0.84, T10 0.79
+     T01 LO8: t -1.11 yrs 1/3 grp 2/5 ok False
+     T02 LO12: t -1.27 yrs 1/3 grp 2/5 ok False
+     T03 LO20: t -1.33 yrs 1/3 grp 2/5 ok False
+     T04 LS-sf0.20: t -0.96 yrs 1/3 grp 3/5 ok False
+     T05 LS-sf0.35: t -0.39 yrs 1/3 grp 4/5 ok False
+     T07 B-MV-N8: t 1.29 yrs 3/3 grp 3/5 ok False
+     T08 CARRY-55: t -1.29 yrs 0/3 grp 2/5 ok False
+     T09 CARRY-35: t -0.89 yrs 1/3 grp 3/5 ok False
+     T10 CARRY7-55: t -1.55 yrs 1/3 grp 1/5 ok False
+gated <2024: pick T07 B-MV-N8; selection SRs T01 0.07, T02 -0.06, T03 -0.12, T04 0.33, T05 0.89, T06 1.28, T07 1.48, T08 0.99, T09 0.68, T10 0.78
+     T01 LO8: t -1.54 yrs 1/4 grp 4/5 ok False
+     T02 LO12: t -1.76 yrs 1/4 grp 4/5 ok False
+     T03 LO20: t -1.82 yrs 1/4 grp 4/5 ok False
+     T04 LS-sf0.20: t -1.47 yrs 1/4 grp 4/5 ok False
+     T05 LS-sf0.35: t -0.92 yrs 1/4 grp 4/5 ok False
+     T07 B-MV-N8: t 1.71 yrs 4/4 grp 4/5 ok True
+     T08 CARRY-55: t -0.97 yrs 1/4 grp 2/5 ok False
+     T09 CARRY-35: t -1.18 yrs 1/4 grp 3/5 ok False
+     T10 CARRY7-55: t -1.65 yrs 1/4 grp 3/5 ok False
+gated <2025: pick T07 B-MV-N8; selection SRs T01 0.02, T02 -0.15, T03 -0.30, T04 0.28, T05 0.90, T06 1.37, T07 1.58, T08 1.13, T09 0.71, T10 1.03
+     T01 LO8: t -1.95 yrs 1/5 grp 4/5 ok False
+     T02 LO12: t -2.26 yrs 1/5 grp 4/5 ok False
+     T03 LO20: t -2.43 yrs 1/5 grp 3/5 ok False
+     T04 LS-sf0.20: t -1.91 yrs 1/5 grp 4/5 ok False
+     T05 LS-sf0.35: t -1.24 yrs 1/5 grp 4/5 ok False
+     T07 B-MV-N8: t 2.09 yrs 4/5 grp 4/5 ok True
+     T08 CARRY-55: t -0.93 yrs 1/5 grp 1/5 ok False
+     T09 CARRY-35: t -1.45 yrs 1/5 grp 3/5 ok False
+     T10 CARRY7-55: t -1.27 yrs 2/5 grp 1/5 ok False
+  OOS gated @5.5bp vs T06 B-MV: {'SR': np.float64(1.536), 'ref_SR': np.float64(1.462), 'bp': np.float64(10.924), 'ref_bp': np.float64(10.247), 'd_rm_bp': np.float64(0.662), 't_rm': np.float64(1.139), 'yearly': {2023: (np.float64(1.05), np.float64(1.05)), 2024: (np.float64(1.94), np.float64(1.72)), 2025: (np.float64(1.54), np.float64(1.55))}}
+  OOS gated @5.5bp vs LIVE: {'SR': np.float64(1.536), 'ref_SR': np.float64(0.776), 'bp': np.float64(10.924), 'ref_bp': np.float64(5.564), 'd_rm_bp': np.float64(6.95), 't_rm': np.float64(3.08), 'yearly': {2023: (np.float64(1.05), np.float64(1.08)), 2024: (np.float64(1.94), np.float64(0.97)), 2025: (np.float64(1.54), np.float64(0.48))}}
+  OOS gated @8bp vs T06 B-MV: {'SR': np.float64(1.341), 'ref_SR': np.float64(1.279), 'bp': np.float64(9.544), 'ref_bp': np.float64(8.97), 'd_rm_bp': np.float64(0.561), 't_rm': np.float64(0.966), 'yearly': {2023: (np.float64(0.85), np.float64(0.85)), 2024: (np.float64(1.76), np.float64(1.56)), 2025: (np.float64(1.33), np.float64(1.36))}}
+  OOS gated @8bp vs LIVE: {'SR': np.float64(1.341), 'ref_SR': np.float64(0.646), 'bp': np.float64(9.544), 'ref_bp': np.float64(4.633), 'd_rm_bp': np.float64(6.3), 't_rm': np.float64(2.793), 'yearly': {2023: (np.float64(0.85), np.float64(0.93)), 2024: (np.float64(1.76), np.float64(0.85)), 2025: (np.float64(1.33), np.float64(0.34))}}
+  OOS gated @12bp vs T06 B-MV: {'SR': np.float64(1.03), 'ref_SR': np.float64(0.987), 'bp': np.float64(7.337), 'ref_bp': np.float64(6.929), 'd_rm_bp': np.float64(0.399), 't_rm': np.float64(0.689), 'yearly': {2023: (np.float64(0.52), np.float64(0.52)), 2024: (np.float64(1.48), np.float64(1.3)), 2025: (np.float64(0.99), np.float64(1.05))}}
+  OOS gated @12bp vs LIVE: {'SR': np.float64(1.03), 'ref_SR': np.float64(0.438), 'bp': np.float64(7.337), 'ref_bp': np.float64(3.145), 'd_rm_bp': np.float64(5.26), 't_rm': np.float64(2.332), 'yearly': {2023: (np.float64(0.52), np.float64(0.7)), 2024: (np.float64(1.48), np.float64(0.67)), 2025: (np.float64(0.99), np.float64(0.12))}}
+ungated <2023: pick T07 B-MV-N8; selection SRs T01 0.35, T02 0.25, T03 0.19, T04 0.65, T05 1.17, T06 1.36, T07 1.54, T08 0.89, T09 0.84, T10 0.79
+ungated <2024: pick T07 B-MV-N8; selection SRs T01 0.07, T02 -0.06, T03 -0.12, T04 0.33, T05 0.89, T06 1.28, T07 1.48, T08 0.99, T09 0.68, T10 0.78
+ungated <2025: pick T07 B-MV-N8; selection SRs T01 0.02, T02 -0.15, T03 -0.30, T04 0.28, T05 0.90, T06 1.37, T07 1.58, T08 1.13, T09 0.71, T10 1.03
+  OOS ungated @5.5bp vs T06 B-MV: {'SR': np.float64(1.61), 'ref_SR': np.float64(1.462), 'bp': np.float64(11.535), 'ref_bp': np.float64(10.247), 'd_rm_bp': np.float64(1.292), 't_rm': np.float64(1.873), 'yearly': {2023: (np.float64(1.35), np.float64(1.05)), 2024: (np.float64(1.94), np.float64(1.72)), 2025: (np.float64(1.54), np.float64(1.55))}}
+  OOS ungated @5.5bp vs LIVE: {'SR': np.float64(1.61), 'ref_SR': np.float64(0.776), 'bp': np.float64(11.535), 'ref_bp': np.float64(5.564), 'd_rm_bp': np.float64(7.692), 't_rm': np.float64(3.307), 'yearly': {2023: (np.float64(1.35), np.float64(1.08)), 2024: (np.float64(1.94), np.float64(0.97)), 2025: (np.float64(1.54), np.float64(0.48))}}
+  OOS ungated @8bp vs T06 B-MV: {'SR': np.float64(1.413), 'ref_SR': np.float64(1.279), 'bp': np.float64(10.126), 'ref_bp': np.float64(8.97), 'd_rm_bp': np.float64(1.158), 't_rm': np.float64(1.68), 'yearly': {2023: (np.float64(1.13), np.float64(0.85)), 2024: (np.float64(1.76), np.float64(1.56)), 2025: (np.float64(1.33), np.float64(1.36))}}
+  OOS ungated @8bp vs LIVE: {'SR': np.float64(1.413), 'ref_SR': np.float64(0.646), 'bp': np.float64(10.126), 'ref_bp': np.float64(4.633), 'd_rm_bp': np.float64(7.004), 't_rm': np.float64(3.012), 'yearly': {2023: (np.float64(1.13), np.float64(0.93)), 2024: (np.float64(1.76), np.float64(0.85)), 2025: (np.float64(1.33), np.float64(0.34))}}
+  OOS ungated @12bp vs T06 B-MV: {'SR': np.float64(1.097), 'ref_SR': np.float64(0.987), 'bp': np.float64(7.871), 'ref_bp': np.float64(6.929), 'd_rm_bp': np.float64(0.945), 't_rm': np.float64(1.371), 'yearly': {2023: (np.float64(0.79), np.float64(0.52)), 2024: (np.float64(1.48), np.float64(1.3)), 2025: (np.float64(0.99), np.float64(1.05))}}
+  OOS ungated @12bp vs LIVE: {'SR': np.float64(1.097), 'ref_SR': np.float64(0.438), 'bp': np.float64(7.871), 'ref_bp': np.float64(3.145), 'd_rm_bp': np.float64(5.902), 't_rm': np.float64(2.539), 'yearly': {2023: (np.float64(0.79), np.float64(0.7)), 2024: (np.float64(1.48), np.float64(0.67)), 2025: (np.float64(0.99), np.float64(0.12))}}

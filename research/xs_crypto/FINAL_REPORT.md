@@ -120,3 +120,28 @@ The accessible search space looks exhausted. Two full waves of new signal, hedge
    - Candidate for the 2026 holdout: B-MV with **8 longs and a 50/50 short allocation**. This is the clean pipeline's pick, and N=8 is also supported by wave 3b.
 2. **Log every short-stop fill vs the 20% trigger.** If slippage averages ≥ 2%, the case for switching largely disappears.
 3. Expected live SR: LIVE about 1.2 → B-MV about **1.35–1.55**, i.e. **about $13–19/month on $330** at matched risk. Drawdown planning is unchanged: about −30%.
+
+
+---
+
+## Wave 4 (2026-09-30): structure re-derived under correct accounting (results/wave4)
+Accounting: simple returns, drift, hedge band, BTC funding on the hedge, 8-clock. All selection is by pseudo-holdout on 2023/24/25.
+- **No structural change beats B-MV.** Long-only (SR −0.1 to −0.5), smaller short legs (0.20 / 0.88) and funding-carry shorts (0.66–1.12) all lose to B-MV (1.41).
+- **Correction to wave 3c's attribution.** After regressing on BTC+ETH:
+  - the **short leg carries the alpha**: +15.4 bp/day, t 4.3;
+  - the calm long leg is beta: −11.8 bp/day alpha per $.
+  - Raw leg P&L was misleading.
+- **The pipeline's only pick is 8 longs (B-MV-N8).** Pooled OOS 2023–25:
+
+  | | SR at 5.5 / 8 / 12 bp |
+  |---|---|
+  | B-MV-N8 | 1.54 / 1.34 / 1.03 |
+  | B-MV | 1.46 / 1.28 / 0.99 |
+  | LIVE | 0.78 / 0.65 / 0.44 |
+
+  - Pick vs LIVE: t 3.08.
+  - Pick vs B-MV: t 1.14, not significant.
+- **Score settings stay** (fw 0.25, L 336). fw 0.5 is a lead to check on 2026 only: OOS SR 1.88 but weak in 2023, and it adds 35% turnover.
+- **Pumped shorts:** a short that is +20% against you keeps drifting against you on average. Keep the 20% cover rule.
+
+**Final recommendation:** switch to B-MV (N=8 optional), with a 0.03 hedge band and orders split over about 3h. Log short-stop slippage. Realistic live SR ≈ **0.8–1.2** (LIVE ≈ 0.4–0.7), i.e. **about $8–14/month on $330 at 1.5x**, with −35% drawdowns possible.

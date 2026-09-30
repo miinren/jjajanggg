@@ -1,0 +1,21 @@
+  alt = np.nanmean(np.where(D.M.to_numpy(), g, np.nan), 1)
+B-MV idio+fund shorts      per $ short: raw price   4.08  funding(short+hedge)  3.03 bp/day | alpha BTC+ETH  27.97 (t 4.32)  +ALT  17.60 (t 4.31)
+CARRY-55 shorts            per $ short: raw price   0.01  funding(short+hedge)  3.61 bp/day | alpha BTC+ETH  24.12 (t 3.79)  +ALT  13.76 (t 3.46)
+CARRY7-55 shorts           per $ short: raw price  -1.09  funding(short+hedge)  3.12 bp/day | alpha BTC+ETH  23.49 (t 3.72)  +ALT  12.99 (t 3.10)
+N8 fw0 L336 shorts         per $ short: raw price  -3.51  funding(short+hedge)  2.72 bp/day | alpha BTC+ETH  20.22 (t 2.99)  +ALT   9.64 (t 2.29)
+N8 fw0.25 L336 shorts      per $ short: raw price   5.03  funding(short+hedge)  3.03 bp/day | alpha BTC+ETH  28.93 (t 4.45)  +ALT  18.55 (t 4.45)
+N8 fw0.5 L336 shorts       per $ short: raw price   2.79  funding(short+hedge)  3.40 bp/day | alpha BTC+ETH  26.78 (t 4.52)  +ALT  17.03 (t 4.16)
+
+D2b LIVE rules: mean forward return, t with events clustered by calendar day (SE of daily means)
+  +  0%  H= 72h  n=3473 days=1546  mean  -0.69%  t -0.30
+  +  0%  H=168h  n=3473 days=1546  mean  -0.08%  t  0.58
+  + 20%  H= 72h  n= 796 days= 583  mean   3.26%  t  1.30
+  + 20%  H=168h  n= 796 days= 583  mean   2.72%  t  1.08
+  + 30%  H= 72h  n= 510 days= 409  mean   6.34%  t  1.68
+  + 30%  H=168h  n= 510 days= 409  mean   5.85%  t  1.45
+  + 50%  H= 72h  n= 285 days= 248  mean   8.27%  t  1.50
+  + 50%  H=168h  n= 285 days= 248  mean   4.21%  t  0.90
+  + 75%  H= 72h  n= 163 days= 145  mean  10.70%  t  1.38
+  + 75%  H=168h  n= 163 days= 145  mean   5.91%  t  1.04
+  +100%  H= 72h  n= 113 days=  99  mean   9.19%  t  0.98
+  +100%  H=168h  n= 113 days=  99  mean   3.02%  t  0.59
